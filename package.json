@@ -1,0 +1,45 @@
+{
+  "name": "counterledger",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "next dev -p 3200",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "reinstall": "rm -rf node_modules .next package-lock.json && npm i",
+    "update:latest": "npx -y npm-check-updates -u && npm i && npm dedupe && npm outdated && npm ls",
+    "rollback:eslint": "npm i -D eslint@^9",
+    "biome:check": "npx biome check",
+    "biome:check:write": "npx biome check --write",
+    "biome:check:write:unsafe": "npx biome check --write --unsafe",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "drizzle-orm": "^0.45.1",
+    "next": "16.1.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.5",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^25",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^17.3.1",
+    "drizzle-kit": "^0.31.9",
+    "eslint": "^9.39.3",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
