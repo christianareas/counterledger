@@ -19,6 +19,7 @@
     "biome:check": "npx biome check",
     "biome:check:write": "npx biome check --write",
     "biome:check:write:unsafe": "npx biome check --write --unsafe",
+    "vercel:env:pull": "vercel env pull .env.local",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
