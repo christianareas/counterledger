@@ -6,6 +6,7 @@
 
 import { useState } from "react"
 import { usePlaidLink } from "react-plaid-link"
+import { CreateLinkTokenResponse } from "@/lib/schemas/api"
 
 // --------------------------------------------------------------------------------
 // Home page.
@@ -13,7 +14,7 @@ import { usePlaidLink } from "react-plaid-link"
 
 export default function Home() {
 	// Initial state.
-	const [plaidLinkToken, setPlaidLinkToken] = useState(null)
+	const [plaidLinkToken, setPlaidLinkToken] = useState<string | null>(null)
 
 	// Open Plaid Link.
 	const { open, ready } = usePlaidLink({
@@ -29,8 +30,10 @@ export default function Home() {
 		const response = await fetch("/api/plaid/create-link-token", {
 			method: "POST",
 		})
-		const data = await response.json()
-		setPlaidLinkToken(data.linkToken)
+
+		setPlaidLinkToken(
+			CreateLinkTokenResponse.parse(await response.json()).plaidLinkToken,
+		)
 	}
 
 	// Return the home page.

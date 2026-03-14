@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server"
 import { CountryCode, Products } from "plaid"
 import { plaidClient } from "@/lib/plaid"
+import type { CreateLinkTokenResponse } from "@/lib/schemas/api"
 
 // --------------------------------------------------------------------------------
 // POST /api/plaid/create-link-token.
@@ -22,7 +23,7 @@ export async function POST() {
 		})
 
 		// Return the token.
-		return NextResponse.json({
+		return NextResponse.json<CreateLinkTokenResponse>({
 			plaidLinkToken: response.data.link_token,
 		})
 	} catch (error) {
