@@ -5,13 +5,35 @@
 import { z } from "zod"
 
 // --------------------------------------------------------------------------------
-// Plaid.
+// Create Plaid link token.
 // --------------------------------------------------------------------------------
 
-export const CreateLinkTokenResponse = z.object({
+export const CreatePlaidLinkTokenResponse = z.object({
 	plaidLinkToken: z.string(),
 })
 
-export type CreateLinkTokenResponse = z.infer<typeof CreateLinkTokenResponse>
+export type CreatePlaidLinkTokenResponse = z.infer<
+	typeof CreatePlaidLinkTokenResponse
+>
+
+// --------------------------------------------------------------------------------
+// Exchange Plaid public token.
+// --------------------------------------------------------------------------------
+
+export const ExchangePlaidPublicTokenRequest = z.object({
+	publicToken: z.string(),
+})
+
+export type ExchangePlaidPublicTokenRequest = z.infer<
+	typeof ExchangePlaidPublicTokenRequest
+>
+
+export const ExchangePlaidPublicTokenResponse = z.object({
+	success: z.boolean(),
+})
+
+export type ExchangePlaidPublicTokenResponse = z.infer<
+	typeof ExchangePlaidPublicTokenResponse
+>
 
 // --------------------------------------------------------------------------------

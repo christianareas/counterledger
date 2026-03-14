@@ -6,7 +6,7 @@
 
 import { useState } from "react"
 import { usePlaidLink } from "react-plaid-link"
-import { CreateLinkTokenResponse } from "@/lib/schemas/api"
+import { CreatePlaidLinkTokenResponse } from "@/lib/schemas/api"
 
 // --------------------------------------------------------------------------------
 // Home page.
@@ -26,13 +26,13 @@ export default function Home() {
 	})
 
 	// Fetch a Plaid link token.
-	async function fetchLinkToken() {
+	async function fetchPlaidLinkToken() {
 		const response = await fetch("/api/plaid/create-link-token", {
 			method: "POST",
 		})
 
 		setPlaidLinkToken(
-			CreateLinkTokenResponse.parse(await response.json()).plaidLinkToken,
+			CreatePlaidLinkTokenResponse.parse(await response.json()).plaidLinkToken,
 		)
 	}
 
@@ -44,9 +44,9 @@ export default function Home() {
 		>
 			<button
 				type="button"
-				onClick={() => (plaidLinkToken ? open() : fetchLinkToken())}
+				onClick={() => (plaidLinkToken ? open() : fetchPlaidLinkToken())}
 				disabled={!!plaidLinkToken && !ready}
-				className="flex items-center gap-2 rounded border border-neutral-500 bg-neutral-200 px-4 py-2 text-neutral-950 transition hover:bg-neutral-50 disabled:opacity-50 dark:border-neutral-300 dark:bg-neutral-800 dark:text-neutral-50 dark:hover:bg-neutral-950"
+				className="flex items-center gap-2 rounded-lg border border-neutral-500 px-4 py-2 text-neutral-700 transition hover:bg-neutral-50 disabled:opacity-50 dark:border-neutral-300 dark:bg-neutral-800 dark:text-neutral-50 dark:hover:bg-neutral-950"
 			>
 				Open Plaid Link
 			</button>
