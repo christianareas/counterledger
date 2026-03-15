@@ -4,5 +4,5 @@ method: POST
 body:
   type: json
   content: ""
-examples: .resources/Sync.resources/examples
+examples: .resources/Sync Accounts and Transactions.resources/examples
 order: 4298082483840309
