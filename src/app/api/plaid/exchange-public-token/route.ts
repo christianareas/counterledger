@@ -2,7 +2,6 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
-import { randomUUID } from "node:crypto"
 import { type NextRequest, NextResponse } from "next/server"
 import { CountryCode } from "plaid"
 import {
@@ -11,8 +10,7 @@ import {
 	catchServerError,
 	catchZodError,
 } from "@/lib/api/errors"
-import { db } from "@/lib/db"
-import { connections, institutions } from "@/lib/db/schema"
+import { insertInstitutionAndConnection } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
 import {
 	ExchangePlaidPublicTokenRequest,
@@ -56,27 +54,19 @@ export async function POST(request: NextRequest) {
 			})
 		).data.institution
 
-		// Generate UUIDs.
-		const institutionId = randomUUID()
-		const connectionId = randomUUID()
-
 		// Insert the institution and connection.
-		await db.transaction(async (transaction) => {
-			await transaction.insert(institutions).values({
-				institutionId,
+		const { connectionId } = await insertInstitutionAndConnection(
+			{
 				plaidInstitutionId: institution.institution_id,
 				plaidInstitutionName: institution.name,
 				plaidInstitutionLogo: institution.logo ?? null,
 				plaidInstitutionUrl: institution.url ?? null,
-			})
-
-			await transaction.insert(connections).values({
-				connectionId,
-				institutionId,
+			},
+			{
 				plaidAccessToken,
 				plaidItemId,
-			})
-		})
+			},
+		)
 
 		// Return the connection ID.
 		return NextResponse.json<ExchangePlaidPublicTokenResponse>(
