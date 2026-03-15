@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/plaid/exchange-public-token"
+method: POST
+body:
+  type: json
+  content: ""
+examples: .resources/Exchange a Public Token.resources/examples
+order: 3948254137713372

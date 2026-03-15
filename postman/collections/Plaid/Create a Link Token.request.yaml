@@ -4,5 +4,4 @@ method: POST
 body:
   type: json
   content: ""
-examples: .resources/Create a Link Token.resources/examples
 order: 1772699813183
