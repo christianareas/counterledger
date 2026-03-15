@@ -1,6 +1,6 @@
 {
-	"id": "3057ccf3-a249-40c2-b79d-e1e816ec6318",
-	"prevId": "00000000-0000-0000-0000-000000000000",
+	"id": "efa85eed-c407-4d07-9988-75a78a12fce3",
+	"prevId": "3057ccf3-a249-40c2-b79d-e1e816ec6318",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -83,7 +83,23 @@
 					"default": "now()"
 				}
 			},
-			"indexes": {},
+			"indexes": {
+				"accounts_plaid_account_id_index": {
+					"name": "accounts_plaid_account_id_index",
+					"columns": [
+						{
+							"expression": "plaid_account_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": true,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
 			"foreignKeys": {
 				"accounts_connection_id_connections_connection_id_fk": {
 					"name": "accounts_connection_id_connections_connection_id_fk",
@@ -321,7 +337,23 @@
 					"default": "now()"
 				}
 			},
-			"indexes": {},
+			"indexes": {
+				"transactions_plaid_transaction_id_index": {
+					"name": "transactions_plaid_transaction_id_index",
+					"columns": [
+						{
+							"expression": "plaid_transaction_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": true,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
 			"foreignKeys": {
 				"transactions_account_id_accounts_account_id_fk": {
 					"name": "transactions_account_id_accounts_account_id_fk",

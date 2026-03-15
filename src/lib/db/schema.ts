@@ -9,6 +9,7 @@ import {
 	pgTable,
 	text,
 	timestamp,
+	uniqueIndex,
 	uuid,
 } from "drizzle-orm/pg-core"
 
@@ -54,7 +55,9 @@ export const accounts = pgTable(
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	},
-	() => [],
+	(table) => [
+		uniqueIndex("accounts_plaid_account_id_index").on(table.plaidAccountId),
+	],
 )
 
 // --------------------------------------------------------------------------------
@@ -89,7 +92,11 @@ export const transactions = pgTable(
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 	},
-	() => [],
+	(table) => [
+		uniqueIndex("transactions_plaid_transaction_id_index").on(
+			table.plaidTransactionId,
+		),
+	],
 )
 
 // --------------------------------------------------------------------------------
