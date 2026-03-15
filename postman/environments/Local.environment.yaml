@@ -1,5 +1,14 @@
 name: Local
 values:
   - key: baseUrl
+    value: 'http://localhost:3200'
+    enabled: true
+  - key: plaidClientId
+    value: ''
+    enabled: true
+  - key: plaidSecret
+    value: ''
+    enabled: true
+  - key: plaidPublicToken
     value: ''
     enabled: true

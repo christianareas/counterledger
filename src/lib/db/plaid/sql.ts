@@ -32,7 +32,7 @@ export async function insertInstitutionAndConnection(
 			.values({ connectionId, institutionId, ...connection })
 	})
 
-	return { institutionId, connectionId }
+	return connectionId
 }
 
 // --------------------------------------------------------------------------------

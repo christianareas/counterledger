@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 		).data.institution
 
 		// Insert the institution and connection.
-		const { connectionId } = await insertInstitutionAndConnection(
+		const connectionId = await insertInstitutionAndConnection(
 			{
 				plaidInstitutionId: institution.institution_id,
 				plaidInstitutionName: institution.name,
