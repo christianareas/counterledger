@@ -1,0 +1,398 @@
+{
+  "id": "efa85eed-c407-4d07-9988-75a78a12fce3",
+  "prevId": "3057ccf3-a249-40c2-b79d-e1e816ec6318",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.accounts": {
+      "name": "accounts",
+      "schema": "",
+      "columns": {
+        "account_id": {
+          "name": "account_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "connection_id": {
+          "name": "connection_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_account_id": {
+          "name": "plaid_account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_account_name": {
+          "name": "plaid_account_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_account_type": {
+          "name": "plaid_account_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_account_subtype": {
+          "name": "plaid_account_subtype",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_account_mask": {
+          "name": "plaid_account_mask",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_currency_code": {
+          "name": "plaid_currency_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_current_balance": {
+          "name": "plaid_current_balance",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_available_balance": {
+          "name": "plaid_available_balance",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "accounts_plaid_account_id_index": {
+          "name": "accounts_plaid_account_id_index",
+          "columns": [
+            {
+              "expression": "plaid_account_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "accounts_connection_id_connections_connection_id_fk": {
+          "name": "accounts_connection_id_connections_connection_id_fk",
+          "tableFrom": "accounts",
+          "tableTo": "connections",
+          "columnsFrom": [
+            "connection_id"
+          ],
+          "columnsTo": [
+            "connection_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.connections": {
+      "name": "connections",
+      "schema": "",
+      "columns": {
+        "connection_id": {
+          "name": "connection_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "institution_id": {
+          "name": "institution_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_access_token": {
+          "name": "plaid_access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_item_id": {
+          "name": "plaid_item_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_cursor": {
+          "name": "plaid_cursor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "connections_institution_id_institutions_institution_id_fk": {
+          "name": "connections_institution_id_institutions_institution_id_fk",
+          "tableFrom": "connections",
+          "tableTo": "institutions",
+          "columnsFrom": [
+            "institution_id"
+          ],
+          "columnsTo": [
+            "institution_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.institutions": {
+      "name": "institutions",
+      "schema": "",
+      "columns": {
+        "institution_id": {
+          "name": "institution_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "plaid_institution_id": {
+          "name": "plaid_institution_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_institution_name": {
+          "name": "plaid_institution_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_institution_logo": {
+          "name": "plaid_institution_logo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_institution_url": {
+          "name": "plaid_institution_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.transactions": {
+      "name": "transactions",
+      "schema": "",
+      "columns": {
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_transaction_id": {
+          "name": "plaid_transaction_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_name": {
+          "name": "plaid_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_merchant_name": {
+          "name": "plaid_merchant_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_currency_code": {
+          "name": "plaid_currency_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_amount": {
+          "name": "plaid_amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_date": {
+          "name": "plaid_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_authorized_date": {
+          "name": "plaid_authorized_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_pending": {
+          "name": "plaid_pending",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_payment_channel": {
+          "name": "plaid_payment_channel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plaid_personal_finance_category_primary": {
+          "name": "plaid_personal_finance_category_primary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_personal_finance_category_detailed": {
+          "name": "plaid_personal_finance_category_detailed",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plaid_personal_finance_category_confidence_level": {
+          "name": "plaid_personal_finance_category_confidence_level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "transactions_plaid_transaction_id_index": {
+          "name": "transactions_plaid_transaction_id_index",
+          "columns": [
+            {
+              "expression": "plaid_transaction_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "transactions_account_id_accounts_account_id_fk": {
+          "name": "transactions_account_id_accounts_account_id_fk",
+          "tableFrom": "transactions",
+          "tableTo": "accounts",
+          "columnsFrom": [
+            "account_id"
+          ],
+          "columnsTo": [
+            "account_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

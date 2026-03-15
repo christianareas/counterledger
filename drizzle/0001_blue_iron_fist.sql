@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX "accounts_plaid_account_id_index" ON "accounts" USING btree ("plaid_account_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "transactions_plaid_transaction_id_index" ON "transactions" USING btree ("plaid_transaction_id");

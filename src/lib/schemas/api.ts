@@ -37,3 +37,15 @@ export type ExchangePlaidPublicTokenResponse = z.infer<
 >
 
 // --------------------------------------------------------------------------------
+// Sync Plaid accounts and transactions.
+// --------------------------------------------------------------------------------
+
+export const SyncPlaidAccountsAndTransactionsResponse = z.object({
+	synced: z.number(),
+})
+
+export type SyncPlaidAccountsAndTransactionsResponse = z.infer<
+	typeof SyncPlaidAccountsAndTransactionsResponse
+>
+
+// --------------------------------------------------------------------------------
