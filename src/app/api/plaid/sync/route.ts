@@ -2,16 +2,17 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
-import { randomUUID } from "node:crypto"
-import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import {
 	catchDatabaseError,
 	catchPlaidError,
 	catchServerError,
 } from "@/lib/api/errors"
-import { db } from "@/lib/db"
-import { accounts, connections, transactions } from "@/lib/db/schema"
+import {
+	getConnections,
+	type PlaidTransactionsSyncResponse,
+	syncAccountsAndTransactions,
+} from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
 import type { SyncPlaidAccountsAndTransactionsResponse } from "@/lib/schemas/api"
 
@@ -21,185 +22,78 @@ import type { SyncPlaidAccountsAndTransactionsResponse } from "@/lib/schemas/api
 
 export async function POST() {
 	try {
-		// Get all connections.
-		const allConnections = await db.select().from(connections)
+		// Get all the connections.
+		const connections = await getConnections()
 
-		let synced = 0
+		// Initialize the counts.
+		let createdAccountsCount = 0
+		let updatedAccountsCount = 0
+		let createdTransactionsCount = 0
+		let updatedTransactionsCount = 0
+		let deletedTransactionsCount = 0
 
-		for (const connection of allConnections) {
+		// Sync all the accounts and transactions.
+		for (const connection of connections) {
+			// Get the connection.
 			const { connectionId, plaidAccessToken, plaidCursor } = connection
 
-			// Fetch accounts and transactions from Plaid.
+			// Get the accounts.
 			const { accounts: plaidAccounts } = (
 				await plaidClient.accountsGet({
 					access_token: plaidAccessToken,
 				})
 			).data
 
-			let cursor = plaidCursor ?? undefined
-			let hasMore = true
-			type SyncData = Awaited<
-				ReturnType<typeof plaidClient.transactionsSync>
-			>["data"]
-			const allAdded: SyncData["added"] = []
-			const allModified: SyncData["modified"] = []
-			const allRemoved: SyncData["removed"] = []
+			// Get the transactions.
+			const createdTransactions: PlaidTransactionsSyncResponse["added"] = []
+			const updatedTransactions: PlaidTransactionsSyncResponse["modified"] = []
+			const deletedTransactions: PlaidTransactionsSyncResponse["removed"] = []
 
-			while (hasMore) {
+			let plaidNextCursor = plaidCursor ?? undefined
+			let plaidMorePages: boolean
+
+			do {
 				const { added, modified, removed, next_cursor, has_more } = (
 					await plaidClient.transactionsSync({
 						access_token: plaidAccessToken,
-						cursor,
+						cursor: plaidNextCursor,
 					})
 				).data
 
-				allAdded.push(...added)
-				allModified.push(...modified)
-				allRemoved.push(...removed)
-				cursor = next_cursor
-				hasMore = has_more
-			}
+				createdTransactions.push(...added)
+				updatedTransactions.push(...modified)
+				deletedTransactions.push(...removed)
+				plaidNextCursor = next_cursor
+				plaidMorePages = has_more
+			} while (plaidMorePages)
 
-			// Write all changes in a single transaction.
-			await db.transaction(async (transaction) => {
-				// Upsert accounts.
-				for (const plaidAccount of plaidAccounts) {
-					await transaction
-						.insert(accounts)
-						.values({
-							accountId: randomUUID(),
-							connectionId,
-							plaidAccountId: plaidAccount.account_id,
-							plaidAccountName: plaidAccount.name,
-							plaidAccountType: plaidAccount.type,
-							plaidAccountSubtype: plaidAccount.subtype ?? null,
-							plaidAccountMask: plaidAccount.mask ?? null,
-							plaidCurrencyCode:
-								plaidAccount.balances.iso_currency_code ?? null,
-							plaidCurrentBalance:
-								plaidAccount.balances.current?.toString() ?? "0",
-							plaidAvailableBalance:
-								plaidAccount.balances.available?.toString() ?? null,
-						})
-						.onConflictDoUpdate({
-							target: accounts.plaidAccountId,
-							set: {
-								plaidAccountName: plaidAccount.name,
-								plaidAccountType: plaidAccount.type,
-								plaidAccountSubtype: plaidAccount.subtype ?? null,
-								plaidAccountMask: plaidAccount.mask ?? null,
-								plaidCurrencyCode:
-									plaidAccount.balances.iso_currency_code ?? null,
-								plaidCurrentBalance:
-									plaidAccount.balances.current?.toString() ?? "0",
-								plaidAvailableBalance:
-									plaidAccount.balances.available?.toString() ?? null,
-								updatedAt: new Date(),
-							},
-						})
-				}
+			// Sync.
+			const counts = await syncAccountsAndTransactions(
+				connectionId,
+				plaidAccounts,
+				createdTransactions,
+				updatedTransactions,
+				deletedTransactions,
+				plaidNextCursor,
+			)
 
-				// Get a map of plaidAccountId -> accountId for FK resolution.
-				const accountRows = await transaction
-					.select()
-					.from(accounts)
-					.where(eq(accounts.connectionId, connectionId))
-				const accountIdMap = new Map(
-					accountRows.map((a) => [a.plaidAccountId, a.accountId]),
-				)
-
-				// Upsert added transactions.
-				for (const t of allAdded) {
-					const accountId = accountIdMap.get(t.account_id)
-					if (!accountId) continue
-
-					await transaction
-						.insert(transactions)
-						.values({
-							transactionId: randomUUID(),
-							accountId,
-							plaidTransactionId: t.transaction_id,
-							plaidName: t.name,
-							plaidMerchantName: t.merchant_name ?? null,
-							plaidCurrencyCode: t.iso_currency_code ?? null,
-							plaidAmount: t.amount.toString(),
-							plaidDate: t.date,
-							plaidAuthorizedDate: t.authorized_date ?? null,
-							plaidPending: t.pending,
-							plaidPaymentChannel: t.payment_channel,
-							plaidPersonalFinanceCategoryPrimary:
-								t.personal_finance_category?.primary ?? null,
-							plaidPersonalFinanceCategoryDetailed:
-								t.personal_finance_category?.detailed ?? null,
-							plaidPersonalFinanceCategoryConfidenceLevel:
-								t.personal_finance_category?.confidence_level ?? null,
-						})
-						.onConflictDoUpdate({
-							target: transactions.plaidTransactionId,
-							set: {
-								plaidName: t.name,
-								plaidMerchantName: t.merchant_name ?? null,
-								plaidCurrencyCode: t.iso_currency_code ?? null,
-								plaidAmount: t.amount.toString(),
-								plaidDate: t.date,
-								plaidAuthorizedDate: t.authorized_date ?? null,
-								plaidPending: t.pending,
-								plaidPaymentChannel: t.payment_channel,
-								plaidPersonalFinanceCategoryPrimary:
-									t.personal_finance_category?.primary ?? null,
-								plaidPersonalFinanceCategoryDetailed:
-									t.personal_finance_category?.detailed ?? null,
-								plaidPersonalFinanceCategoryConfidenceLevel:
-									t.personal_finance_category?.confidence_level ?? null,
-								updatedAt: new Date(),
-							},
-						})
-
-					synced++
-				}
-
-				// Upsert modified transactions.
-				for (const t of allModified) {
-					await transaction
-						.update(transactions)
-						.set({
-							plaidName: t.name,
-							plaidMerchantName: t.merchant_name ?? null,
-							plaidCurrencyCode: t.iso_currency_code ?? null,
-							plaidAmount: t.amount.toString(),
-							plaidDate: t.date,
-							plaidAuthorizedDate: t.authorized_date ?? null,
-							plaidPending: t.pending,
-							plaidPaymentChannel: t.payment_channel,
-							plaidPersonalFinanceCategoryPrimary:
-								t.personal_finance_category?.primary ?? null,
-							plaidPersonalFinanceCategoryDetailed:
-								t.personal_finance_category?.detailed ?? null,
-							plaidPersonalFinanceCategoryConfidenceLevel:
-								t.personal_finance_category?.confidence_level ?? null,
-							updatedAt: new Date(),
-						})
-						.where(eq(transactions.plaidTransactionId, t.transaction_id))
-				}
-
-				// Delete removed transactions.
-				for (const t of allRemoved) {
-					await transaction
-						.delete(transactions)
-						.where(eq(transactions.plaidTransactionId, t.transaction_id))
-				}
-
-				// Update the cursor on the connection.
-				await transaction
-					.update(connections)
-					.set({ plaidCursor: cursor, updatedAt: new Date() })
-					.where(eq(connections.connectionId, connectionId))
-			})
+			// Update the counts.
+			createdAccountsCount += counts.createdAccountsCount
+			updatedAccountsCount += counts.updatedAccountsCount
+			createdTransactionsCount += counts.createdTransactionsCount
+			updatedTransactionsCount += counts.updatedTransactionsCount
+			deletedTransactionsCount += counts.deletedTransactionsCount
 		}
 
-		// Return the number of synced transactions.
+		// Return the counts.
 		return NextResponse.json<SyncPlaidAccountsAndTransactionsResponse>(
-			{ synced },
+			{
+				createdAccountsCount,
+				updatedAccountsCount,
+				createdTransactionsCount,
+				updatedTransactionsCount,
+				deletedTransactionsCount,
+			},
 			{ status: 200 },
 		)
 	} catch (error) {

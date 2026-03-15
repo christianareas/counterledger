@@ -41,7 +41,11 @@ export type ExchangePlaidPublicTokenResponse = z.infer<
 // --------------------------------------------------------------------------------
 
 export const SyncPlaidAccountsAndTransactionsResponse = z.object({
-	synced: z.number(),
+	createdAccountsCount: z.number(),
+	updatedAccountsCount: z.number(),
+	createdTransactionsCount: z.number(),
+	updatedTransactionsCount: z.number(),
+	deletedTransactionsCount: z.number(),
 })
 
 export type SyncPlaidAccountsAndTransactionsResponse = z.infer<

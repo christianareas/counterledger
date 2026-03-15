@@ -10,7 +10,7 @@ import {
 	catchServerError,
 	catchZodError,
 } from "@/lib/api/errors"
-import { insertInstitutionAndConnection } from "@/lib/db/plaid/sql"
+import { createInstitutionAndConnection } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
 import {
 	ExchangePlaidPublicTokenRequest,
@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
 			})
 		).data.institution
 
-		// Insert the institution and connection.
-		const connectionId = await insertInstitutionAndConnection(
+		// Create the institution and connection.
+		const connectionId = await createInstitutionAndConnection(
 			{
 				plaidInstitutionId: institution.institution_id,
 				plaidInstitutionName: institution.name,
