@@ -2,6 +2,7 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
+import axios from "axios"
 import { NextResponse } from "next/server"
 import { CountryCode, Products } from "plaid"
 import { plaidClient } from "@/lib/plaid"
@@ -23,13 +24,24 @@ export async function POST() {
 		})
 
 		// Return the token.
-		return NextResponse.json<CreatePlaidLinkTokenResponse>({
-			plaidLinkToken: response.data.link_token,
-		})
+		return NextResponse.json<CreatePlaidLinkTokenResponse>(
+			{ plaidLinkToken: response.data.link_token },
+			{ status: 201 },
+		)
 	} catch (error) {
+		// Plaid errors.
+		if (axios.isAxiosError(error) && error.response?.data) {
+			console.error(error)
+			return NextResponse.json(
+				{ error: error.response.data.error_message },
+				{ status: 500 },
+			)
+		}
+
+		// Other errors.
 		console.error(error)
 		return NextResponse.json(
-			{ error: "Couldn't create a Plaid link token." },
+			{ error: "Couldn't create the Plaid link token." },
 			{ status: 500 },
 		)
 	}

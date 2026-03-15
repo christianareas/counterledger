@@ -21,7 +21,7 @@ export type CreatePlaidLinkTokenResponse = z.infer<
 // --------------------------------------------------------------------------------
 
 export const ExchangePlaidPublicTokenRequest = z.object({
-	publicToken: z.string(),
+	plaidPublicToken: z.string(),
 })
 
 export type ExchangePlaidPublicTokenRequest = z.infer<
@@ -29,7 +29,7 @@ export type ExchangePlaidPublicTokenRequest = z.infer<
 >
 
 export const ExchangePlaidPublicTokenResponse = z.object({
-	success: z.boolean(),
+	connectionId: z.uuid(),
 })
 
 export type ExchangePlaidPublicTokenResponse = z.infer<

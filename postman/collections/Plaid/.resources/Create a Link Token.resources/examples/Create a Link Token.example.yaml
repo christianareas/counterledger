@@ -1,0 +1,22 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/plaid/create-link-token"
+  method: POST
+  body:
+    type: json
+    content: ""
+response:
+  statusCode: 502
+  statusText: ""
+  headers:
+    vary: rsc, next-router-state-tree, next-router-prefetch,
+      next-router-segment-prefetch
+    content-type: application/json
+    date: Sun, 15 Mar 2026 01:01:44 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+    transfer-encoding: chunked
+  body:
+    type: json
+    content: '{"plaidLinkToken":"link-sandbox-07642cdf-6baa-4804-9ec1-aadb85e10df0"}'
+order: 1773536547459

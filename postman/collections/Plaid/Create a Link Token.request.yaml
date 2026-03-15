@@ -1,8 +1,8 @@
 $kind: http-request
-name: Create a Link Token
 url: "{{baseUrl}}/api/plaid/create-link-token"
 method: POST
 body:
   type: json
   content: ""
+examples: .resources/Create a Link Token.resources/examples
 order: 1772699813183
