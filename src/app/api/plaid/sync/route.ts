@@ -3,10 +3,13 @@
 // --------------------------------------------------------------------------------
 
 import { randomUUID } from "node:crypto"
-import { DatabaseError } from "@neondatabase/serverless"
-import axios from "axios"
 import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
+import {
+	catchDatabaseError,
+	catchPlaidError,
+	catchServerError,
+} from "@/lib/api/errors"
 import { db } from "@/lib/db"
 import { accounts, connections, transactions } from "@/lib/db/schema"
 import { plaidClient } from "@/lib/plaid"
@@ -200,29 +203,13 @@ export async function POST() {
 			{ status: 200 },
 		)
 	} catch (error) {
-		// Plaid errors.
-		if (axios.isAxiosError(error) && error.response?.data) {
-			console.error(error)
-			return NextResponse.json(
-				{ error: error.response.data.error_message },
-				{ status: 500 },
-			)
-		}
-
-		// Database errors.
-		if (error instanceof DatabaseError) {
-			console.error(error)
-			return NextResponse.json(
-				{ error: "Couldn't sync accounts and transactions." },
-				{ status: 500 },
-			)
-		}
-
-		// Other errors.
-		console.error(error)
-		return NextResponse.json(
-			{ error: "Couldn't sync Plaid accounts and transactions." },
-			{ status: 500 },
+		return (
+			catchPlaidError(error) ??
+			catchDatabaseError(
+				error,
+				"Couldn't save the accounts and transactions.",
+			) ??
+			catchServerError(error, "Couldn't sync the accounts and transactions.")
 		)
 	}
 }

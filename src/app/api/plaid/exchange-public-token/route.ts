@@ -3,11 +3,14 @@
 // --------------------------------------------------------------------------------
 
 import { randomUUID } from "node:crypto"
-import { DatabaseError } from "@neondatabase/serverless"
-import axios from "axios"
 import { type NextRequest, NextResponse } from "next/server"
 import { CountryCode } from "plaid"
-import { ZodError } from "zod"
+import {
+	catchDatabaseError,
+	catchPlaidError,
+	catchServerError,
+	catchZodError,
+} from "@/lib/api/errors"
 import { db } from "@/lib/db"
 import { connections, institutions } from "@/lib/db/schema"
 import { plaidClient } from "@/lib/plaid"
@@ -81,38 +84,11 @@ export async function POST(request: NextRequest) {
 			{ status: 201 },
 		)
 	} catch (error) {
-		// Zod errors.
-		if (error instanceof ZodError) {
-			console.error(error)
-			return NextResponse.json(
-				{ error: "The request body isn't valid." },
-				{ status: 400 },
-			)
-		}
-
-		// Plaid errors.
-		if (axios.isAxiosError(error) && error.response?.data) {
-			console.error(error)
-			return NextResponse.json(
-				{ error: error.response.data.error_message },
-				{ status: 500 },
-			)
-		}
-
-		// Database errors.
-		if (error instanceof DatabaseError) {
-			console.error(error)
-			return NextResponse.json(
-				{ error: "Couldn't insert the connection." },
-				{ status: 500 },
-			)
-		}
-
-		// Other errors.
-		console.error(error)
-		return NextResponse.json(
-			{ error: "Couldn't exchange the Plaid public token." },
-			{ status: 500 },
+		return (
+			catchZodError(error) ??
+			catchPlaidError(error) ??
+			catchDatabaseError(error, "Couldn't save the connection.") ??
+			catchServerError(error, "Couldn't exchange the Plaid public token.")
 		)
 	}
 }
