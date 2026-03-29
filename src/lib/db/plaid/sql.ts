@@ -14,7 +14,7 @@ import {
 import type { plaidClient } from "@/lib/plaid"
 
 // --------------------------------------------------------------------------------
-// Get all the connections.
+// Get all connections.
 // --------------------------------------------------------------------------------
 
 export async function getConnections() {

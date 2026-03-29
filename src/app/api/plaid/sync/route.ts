@@ -22,17 +22,17 @@ import type { SyncPlaidAccountsAndTransactionsResponse } from "@/lib/schemas/api
 
 export async function POST() {
 	try {
-		// Get all the connections.
+		// Get all connections.
 		const connections = await getConnections()
 
-		// Initialize the counts.
+		// Initialize counts.
 		let createdAccountsCount = 0
 		let updatedAccountsCount = 0
 		let createdTransactionsCount = 0
 		let updatedTransactionsCount = 0
 		let deletedTransactionsCount = 0
 
-		// Sync all the accounts and transactions.
+		// Sync all accounts and transactions.
 		for (const connection of connections) {
 			// Get the connection.
 			const { connectionId, plaidAccessToken, plaidCursor } = connection
