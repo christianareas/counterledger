@@ -12,6 +12,7 @@ import {
 } from "@/lib/api/errors"
 import { createInstitutionAndConnection } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
+import { mapPlaidInstitutionToDatabase } from "@/lib/plaid/adapters"
 import {
 	ExchangePlaidPublicTokenRequest,
 	type ExchangePlaidPublicTokenResponse,
@@ -56,12 +57,7 @@ export async function POST(request: NextRequest) {
 
 		// Create the institution and connection.
 		const connectionId = await createInstitutionAndConnection(
-			{
-				plaidInstitutionId: institution.institution_id,
-				plaidInstitutionName: institution.name,
-				plaidInstitutionLogo: institution.logo ?? null,
-				plaidInstitutionUrl: institution.url ?? null,
-			},
+			mapPlaidInstitutionToDatabase(institution),
 			{
 				plaidAccessToken,
 				plaidItemId,

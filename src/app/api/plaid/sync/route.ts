@@ -3,16 +3,13 @@
 // --------------------------------------------------------------------------------
 
 import { NextResponse } from "next/server"
+import type { TransactionsSyncResponse } from "plaid"
 import {
 	catchDatabaseError,
 	catchPlaidError,
 	catchServerError,
 } from "@/lib/api/errors"
-import {
-	getConnections,
-	type PlaidTransactionsSyncResponse,
-	syncAccountsAndTransactions,
-} from "@/lib/db/plaid/sql"
+import { getConnections, syncAccountsAndTransactions } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
 import type { SyncPlaidAccountsAndTransactionsResponse } from "@/lib/schemas/api"
 
@@ -45,9 +42,9 @@ export async function POST() {
 			).data
 
 			// Get the transactions.
-			const createdTransactions: PlaidTransactionsSyncResponse["added"] = []
-			const updatedTransactions: PlaidTransactionsSyncResponse["modified"] = []
-			const deletedTransactions: PlaidTransactionsSyncResponse["removed"] = []
+			const createdTransactions: TransactionsSyncResponse["added"] = []
+			const updatedTransactions: TransactionsSyncResponse["modified"] = []
+			const deletedTransactions: TransactionsSyncResponse["removed"] = []
 
 			let plaidNextCursor = plaidCursor ?? undefined
 			let plaidMorePages: boolean
