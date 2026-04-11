@@ -71,6 +71,7 @@ export const transactions = pgTable(
 		accountId: uuid("account_id")
 			.notNull()
 			.references(() => accounts.accountId), // Foreign key.
+		plaidAccountId: text("plaid_account_id").notNull(),
 		plaidTransactionId: text("plaid_transaction_id").notNull(),
 		plaidName: text("plaid_name").notNull(),
 		plaidMerchantName: text("plaid_merchant_name"),
