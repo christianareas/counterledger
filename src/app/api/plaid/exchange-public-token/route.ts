@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 			throw new Error("Plaid didn't return an institution ID.")
 
 		// Get the institution.
-		const institution = (
+		const plaidInstitution = (
 			await plaidClient.institutionsGetById({
 				institution_id: plaidInstitutionId,
 				country_codes: [CountryCode.Us],
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
 		// Create the institution and connection.
 		const connectionId = await createInstitutionAndConnection(
-			mapPlaidInstitutionToDatabase(institution),
+			mapPlaidInstitutionToDatabase(plaidInstitution),
 			{
 				plaidAccessToken,
 				plaidItemId,

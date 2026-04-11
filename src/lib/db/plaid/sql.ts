@@ -4,7 +4,7 @@
 
 import { randomUUID } from "node:crypto"
 import { eq } from "drizzle-orm"
-import type { AccountBase, TransactionsSyncResponse } from "plaid"
+import type { TransactionsSyncResponse } from "plaid"
 import { db } from "@/lib/db"
 import {
 	accounts,
@@ -26,13 +26,13 @@ export async function getConnections() {
 // --------------------------------------------------------------------------------
 
 export async function createInstitutionAndConnection(
-	institution: {
+	plaidInstitution: {
 		plaidInstitutionId: string
 		plaidInstitutionName: string
 		plaidInstitutionLogo: string | null
 		plaidInstitutionUrl: string | null
 	},
-	connection: {
+	plaidConnection: {
 		plaidAccessToken: string
 		plaidItemId: string
 	},
@@ -43,10 +43,10 @@ export async function createInstitutionAndConnection(
 
 	// Insert institution and connection.
 	await db.transaction(async (tx) => {
-		await tx.insert(institutions).values({ institutionId, ...institution })
+		await tx.insert(institutions).values({ institutionId, ...plaidInstitution })
 		await tx
 			.insert(connections)
-			.values({ connectionId, institutionId, ...connection })
+			.values({ connectionId, institutionId, ...plaidConnection })
 	})
 
 	// Return the connection ID.
@@ -78,7 +78,16 @@ function toTransactionFields(t: TransactionsSyncResponse["added"][number]) {
 
 export async function syncAccountsAndTransactions(
 	connectionId: string,
-	plaidAccounts: AccountBase[],
+	plaidAccounts: {
+		plaidAccountId: string
+		plaidAccountName: string
+		plaidAccountType: string
+		plaidAccountSubtype: string | null
+		plaidAccountMask: string | null
+		plaidCurrencyCode: string | null
+		plaidCurrentBalance: string
+		plaidAvailableBalance: string | null
+	}[],
 	added: TransactionsSyncResponse["added"],
 	modified: TransactionsSyncResponse["modified"],
 	removed: TransactionsSyncResponse["removed"],
@@ -97,36 +106,25 @@ export async function syncAccountsAndTransactions(
 		let createdAccountsCount = 0
 		let updatedAccountsCount = 0
 
-		for (const a of plaidAccounts) {
+		for (const plaidAccount of plaidAccounts) {
+			const { plaidAccountId, ...accountFields } = plaidAccount
 			await tx
 				.insert(accounts)
 				.values({
 					accountId: randomUUID(),
 					connectionId,
-					plaidAccountId: a.account_id,
-					plaidAccountName: a.name,
-					plaidAccountType: a.type,
-					plaidAccountSubtype: a.subtype ?? null,
-					plaidAccountMask: a.mask ?? null,
-					plaidCurrencyCode: a.balances.iso_currency_code ?? null,
-					plaidCurrentBalance: a.balances.current?.toString() ?? "0",
-					plaidAvailableBalance: a.balances.available?.toString() ?? null,
+					plaidAccountId,
+					...accountFields,
 				})
 				.onConflictDoUpdate({
 					target: accounts.plaidAccountId,
 					set: {
-						plaidAccountName: a.name,
-						plaidAccountType: a.type,
-						plaidAccountSubtype: a.subtype ?? null,
-						plaidAccountMask: a.mask ?? null,
-						plaidCurrencyCode: a.balances.iso_currency_code ?? null,
-						plaidCurrentBalance: a.balances.current?.toString() ?? "0",
-						plaidAvailableBalance: a.balances.available?.toString() ?? null,
+						...accountFields,
 						updatedAt: new Date(),
 					},
 				})
 
-			if (existingAccountIds.has(a.account_id)) {
+			if (existingAccountIds.has(plaidAccountId)) {
 				updatedAccountsCount++
 			} else {
 				createdAccountsCount++

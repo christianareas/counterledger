@@ -11,6 +11,7 @@ import {
 } from "@/lib/api/errors"
 import { getConnections, syncAccountsAndTransactions } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
+import { mapPlaidAccountToDatabase } from "@/lib/plaid/adapters"
 import type { SyncPlaidAccountsAndTransactionsResponse } from "@/lib/schemas/api"
 
 // --------------------------------------------------------------------------------
@@ -35,11 +36,13 @@ export async function POST() {
 			const { connectionId, plaidAccessToken, plaidCursor } = connection
 
 			// Get the accounts.
-			const { accounts: plaidAccounts } = (
+			const plaidAccounts = (
 				await plaidClient.accountsGet({
 					access_token: plaidAccessToken,
 				})
-			).data
+			).data.accounts.map((plaidAccount) =>
+				mapPlaidAccountToDatabase(plaidAccount),
+			)
 
 			// Get the transactions.
 			const createdTransactions: TransactionsSyncResponse["added"] = []

@@ -15,7 +15,9 @@ import type { CreatePlaidLinkTokenResponse } from "@/lib/schemas/api"
 export async function POST() {
 	try {
 		// Create a token.
-		const response = await plaidClient.linkTokenCreate({
+		const {
+			data: { link_token: plaidLinkToken },
+		} = await plaidClient.linkTokenCreate({
 			client_name: "CounterLedger",
 			user: { client_user_id: "christian" },
 			products: [Products.Transactions],
@@ -25,7 +27,7 @@ export async function POST() {
 
 		// Return the token.
 		return NextResponse.json<CreatePlaidLinkTokenResponse>(
-			{ plaidLinkToken: response.data.link_token },
+			{ plaidLinkToken },
 			{ status: 201 },
 		)
 	} catch (error) {
