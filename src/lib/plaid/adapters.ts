@@ -34,6 +34,7 @@ export function mapPlaidTransactionToDatabase(
 	transaction: TransactionsSyncResponse["added"][number],
 ) {
 	return {
+		plaidAccountId: transaction.account_id,
 		plaidTransactionId: transaction.transaction_id,
 		plaidName: transaction.name,
 		plaidMerchantName: transaction.merchant_name ?? null,
