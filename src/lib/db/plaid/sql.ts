@@ -100,17 +100,14 @@ export async function syncAccountsAndTransactions(
 	plaidCursor: string | undefined,
 ) {
 	return db.transaction(async (tx) => {
-		// Plaid account ID to account ID map.
-		const plaidAccountIdToAccountIdMap = new Map(
+		// Plaid account ID to account map.
+		const plaidAccountIdToAccountMap = new Map(
 			(
 				await tx
-					.select({
-						plaidAccountId: accounts.plaidAccountId,
-						accountId: accounts.accountId,
-					})
+					.select()
 					.from(accounts)
 					.where(eq(accounts.connectionId, connectionId))
-			).map((account) => [account.plaidAccountId, account.accountId]),
+			).map((account) => [account.plaidAccountId, account]),
 		)
 
 		// Sync accounts.
@@ -119,9 +116,9 @@ export async function syncAccountsAndTransactions(
 
 		for (const plaidAccount of plaidAccounts) {
 			const { plaidAccountId, ...accountFields } = plaidAccount
-			const accountId = plaidAccountIdToAccountIdMap.get(plaidAccountId)
+			const account = plaidAccountIdToAccountMap.get(plaidAccountId)
 
-			if (!accountId) {
+			if (!account) {
 				const createdAccountId = randomUUID()
 				await tx.insert(accounts).values({
 					connectionId,
@@ -130,16 +127,28 @@ export async function syncAccountsAndTransactions(
 					...accountFields,
 				})
 
-				plaidAccountIdToAccountIdMap.set(plaidAccountId, createdAccountId)
+				plaidAccountIdToAccountMap.set(plaidAccountId, {
+					connectionId,
+					accountId: createdAccountId,
+					...plaidAccount,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				})
 
 				createdAccountsCount++
 			} else {
-				await tx
-					.update(accounts)
-					.set({ ...accountFields, updatedAt: new Date() })
-					.where(eq(accounts.plaidAccountId, plaidAccountId))
+				const accountUpdated = Object.entries(accountFields).some(
+					([key, value]) => account[key as keyof typeof account] !== value,
+				)
 
-				updatedAccountsCount++
+				if (accountUpdated) {
+					await tx
+						.update(accounts)
+						.set({ ...accountFields, updatedAt: new Date() })
+						.where(eq(accounts.plaidAccountId, plaidAccountId))
+
+					updatedAccountsCount++
+				}
 			}
 		}
 
@@ -152,7 +161,8 @@ export async function syncAccountsAndTransactions(
 		for (const createdPlaidTransaction of createdPlaidTransactions) {
 			const { plaidAccountId, plaidTransactionId, ...transactionFields } =
 				createdPlaidTransaction
-			const accountId = plaidAccountIdToAccountIdMap.get(plaidAccountId)
+			const accountId =
+				plaidAccountIdToAccountMap.get(plaidAccountId)?.accountId
 
 			if (!accountId) {
 				console.warn(
