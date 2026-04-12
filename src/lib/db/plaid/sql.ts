@@ -3,8 +3,7 @@
 // --------------------------------------------------------------------------------
 
 import { randomUUID } from "node:crypto"
-import { eq } from "drizzle-orm"
-import type { TransactionsSyncResponse } from "plaid"
+import { and, eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 import {
 	accounts,
@@ -12,6 +11,49 @@ import {
 	institutions,
 	transactions,
 } from "@/lib/db/schema"
+
+// --------------------------------------------------------------------------------
+// Types.
+// --------------------------------------------------------------------------------
+
+type PlaidInstitution = {
+	plaidInstitutionId: string
+	plaidInstitutionName: string
+	plaidInstitutionLogo: string | null
+	plaidInstitutionUrl: string | null
+}
+
+type PlaidConnection = {
+	plaidAccessToken: string
+	plaidItemId: string
+}
+
+type PlaidAccount = {
+	plaidAccountId: string
+	plaidAccountName: string
+	plaidAccountType: string
+	plaidAccountSubtype: string | null
+	plaidAccountMask: string | null
+	plaidCurrencyCode: string | null
+	plaidCurrentBalance: string
+	plaidAvailableBalance: string | null
+}
+
+type PlaidTransaction = {
+	plaidAccountId: string
+	plaidTransactionId: string
+	plaidName: string
+	plaidMerchantName: string | null
+	plaidCurrencyCode: string | null
+	plaidAmount: string
+	plaidDate: string
+	plaidAuthorizedDate: string | null
+	plaidPending: boolean
+	plaidPaymentChannel: string
+	plaidPersonalFinanceCategoryPrimary: string | null
+	plaidPersonalFinanceCategoryDetailed: string | null
+	plaidPersonalFinanceCategoryConfidenceLevel: string | null
+}
 
 // --------------------------------------------------------------------------------
 // Get all connections.
@@ -26,16 +68,8 @@ export async function getConnections() {
 // --------------------------------------------------------------------------------
 
 export async function createInstitutionAndConnection(
-	plaidInstitution: {
-		plaidInstitutionId: string
-		plaidInstitutionName: string
-		plaidInstitutionLogo: string | null
-		plaidInstitutionUrl: string | null
-	},
-	plaidConnection: {
-		plaidAccessToken: string
-		plaidItemId: string
-	},
+	plaidInstitution: PlaidInstitution,
+	plaidConnection: PlaidConnection,
 ) {
 	// Generate UUIDs.
 	const institutionId = randomUUID()
@@ -57,131 +91,124 @@ export async function createInstitutionAndConnection(
 // Sync all accounts and transactions.
 // --------------------------------------------------------------------------------
 
-function toTransactionFields(t: TransactionsSyncResponse["added"][number]) {
-	return {
-		plaidName: t.name,
-		plaidMerchantName: t.merchant_name ?? null,
-		plaidCurrencyCode: t.iso_currency_code ?? null,
-		plaidAmount: t.amount.toString(),
-		plaidDate: t.date,
-		plaidAuthorizedDate: t.authorized_date ?? null,
-		plaidPending: t.pending,
-		plaidPaymentChannel: t.payment_channel,
-		plaidPersonalFinanceCategoryPrimary:
-			t.personal_finance_category?.primary ?? null,
-		plaidPersonalFinanceCategoryDetailed:
-			t.personal_finance_category?.detailed ?? null,
-		plaidPersonalFinanceCategoryConfidenceLevel:
-			t.personal_finance_category?.confidence_level ?? null,
-	}
-}
-
 export async function syncAccountsAndTransactions(
 	connectionId: string,
-	plaidAccounts: {
-		plaidAccountId: string
-		plaidAccountName: string
-		plaidAccountType: string
-		plaidAccountSubtype: string | null
-		plaidAccountMask: string | null
-		plaidCurrencyCode: string | null
-		plaidCurrentBalance: string
-		plaidAvailableBalance: string | null
-	}[],
-	added: TransactionsSyncResponse["added"],
-	modified: TransactionsSyncResponse["modified"],
-	removed: TransactionsSyncResponse["removed"],
-	cursor: string | undefined,
+	plaidAccounts: PlaidAccount[],
+	createdPlaidTransactions: PlaidTransaction[],
+	updatedPlaidTransactions: PlaidTransaction[],
+	deletedPlaidTransactions: string[],
+	plaidCursor: string | undefined,
 ) {
 	return db.transaction(async (tx) => {
-		// Sync accounts.
-		const existingAccounts = await tx
-			.select({ plaidAccountId: accounts.plaidAccountId })
-			.from(accounts)
-			.where(eq(accounts.connectionId, connectionId))
-		const existingAccountIds = new Set(
-			existingAccounts.map((a) => a.plaidAccountId),
+		// Plaid account ID to account ID map.
+		const plaidAccountIdToAccountIdMap = new Map(
+			(
+				await tx
+					.select({
+						plaidAccountId: accounts.plaidAccountId,
+						accountId: accounts.accountId,
+					})
+					.from(accounts)
+					.where(eq(accounts.connectionId, connectionId))
+			).map((account) => [account.plaidAccountId, account.accountId]),
 		)
 
+		// Sync accounts.
 		let createdAccountsCount = 0
 		let updatedAccountsCount = 0
 
 		for (const plaidAccount of plaidAccounts) {
 			const { plaidAccountId, ...accountFields } = plaidAccount
-			await tx
-				.insert(accounts)
-				.values({
-					accountId: randomUUID(),
+			const accountId = plaidAccountIdToAccountIdMap.get(plaidAccountId)
+
+			if (!accountId) {
+				const createdAccountId = randomUUID()
+				await tx.insert(accounts).values({
 					connectionId,
+					accountId: createdAccountId,
 					plaidAccountId,
 					...accountFields,
 				})
-				.onConflictDoUpdate({
-					target: accounts.plaidAccountId,
-					set: {
-						...accountFields,
-						updatedAt: new Date(),
-					},
-				})
 
-			if (existingAccountIds.has(plaidAccountId)) {
-				updatedAccountsCount++
-			} else {
+				plaidAccountIdToAccountIdMap.set(plaidAccountId, createdAccountId)
+
 				createdAccountsCount++
+			} else {
+				await tx
+					.update(accounts)
+					.set({ ...accountFields, updatedAt: new Date() })
+					.where(eq(accounts.plaidAccountId, plaidAccountId))
+
+				updatedAccountsCount++
 			}
 		}
-
-		// Build account ID map.
-		const accountRows = await tx
-			.select()
-			.from(accounts)
-			.where(eq(accounts.connectionId, connectionId))
-		const accountIdMap = new Map(
-			accountRows.map((a) => [a.plaidAccountId, a.accountId]),
-		)
 
 		// Sync transactions.
 		let createdTransactionsCount = 0
 		let updatedTransactionsCount = 0
 		let deletedTransactionsCount = 0
 
-		for (const t of added) {
-			const accountId = accountIdMap.get(t.account_id)
-			if (!accountId) continue
+		// Create transactions.
+		for (const createdPlaidTransaction of createdPlaidTransactions) {
+			const { plaidAccountId, plaidTransactionId, ...transactionFields } =
+				createdPlaidTransaction
+			const accountId = plaidAccountIdToAccountIdMap.get(plaidAccountId)
+
+			if (!accountId) {
+				console.warn(
+					`No plaidAccountId ${plaidAccountId} in the database for plaidTransactionId ${plaidTransactionId}.`,
+				)
+				continue
+			}
+
 			await tx
 				.insert(transactions)
 				.values({
-					transactionId: randomUUID(),
 					accountId,
-					plaidTransactionId: t.transaction_id,
-					...toTransactionFields(t),
+					transactionId: randomUUID(),
+					plaidAccountId,
+					plaidTransactionId,
+					...transactionFields,
 				})
 				.onConflictDoUpdate({
 					target: transactions.plaidTransactionId,
-					set: { ...toTransactionFields(t), updatedAt: new Date() },
+					set: { ...transactionFields, updatedAt: new Date() },
 				})
+
 			createdTransactionsCount++
 		}
 
-		for (const t of modified) {
+		// Update transactions.
+		for (const updatedPlaidTransaction of updatedPlaidTransactions) {
+			const { plaidAccountId, plaidTransactionId, ...transactionFields } =
+				updatedPlaidTransaction
+
 			await tx
 				.update(transactions)
-				.set({ ...toTransactionFields(t), updatedAt: new Date() })
-				.where(eq(transactions.plaidTransactionId, t.transaction_id))
+				.set({ ...transactionFields, updatedAt: new Date() })
+				.where(
+					and(
+						eq(transactions.plaidTransactionId, plaidTransactionId),
+						eq(transactions.plaidAccountId, plaidAccountId),
+					),
+				)
+
 			updatedTransactionsCount++
 		}
 
-		for (const t of removed) {
+		// Delete transactions.
+		for (const deletedPlaidTransactionId of deletedPlaidTransactions) {
 			await tx
 				.delete(transactions)
-				.where(eq(transactions.plaidTransactionId, t.transaction_id))
+				.where(eq(transactions.plaidTransactionId, deletedPlaidTransactionId))
+
 			deletedTransactionsCount++
 		}
 
 		// Update cursor.
 		await tx
 			.update(connections)
-			.set({ plaidCursor: cursor, updatedAt: new Date() })
+			.set({ plaidCursor, updatedAt: new Date() })
 			.where(eq(connections.connectionId, connectionId))
 
 		return {

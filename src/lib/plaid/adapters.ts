@@ -2,7 +2,7 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
-import type { AccountBase, Institution, TransactionsSyncResponse } from "plaid"
+import type { AccountBase, Institution, Transaction } from "plaid"
 
 // --------------------------------------------------------------------------------
 // Map Plaid fields to database fields.
@@ -30,9 +30,7 @@ export function mapPlaidAccountToDatabase(account: AccountBase) {
 	}
 }
 
-export function mapPlaidTransactionToDatabase(
-	transaction: TransactionsSyncResponse["added"][number],
-) {
+export function mapPlaidTransactionToDatabase(transaction: Transaction) {
 	return {
 		plaidAccountId: transaction.account_id,
 		plaidTransactionId: transaction.transaction_id,

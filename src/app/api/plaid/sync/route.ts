@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------
 
 import { NextResponse } from "next/server"
-import type { TransactionsSyncResponse } from "plaid"
 import {
 	catchDatabaseError,
 	catchPlaidError,
@@ -11,7 +10,10 @@ import {
 } from "@/lib/api/errors"
 import { getConnections, syncAccountsAndTransactions } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
-import { mapPlaidAccountToDatabase } from "@/lib/plaid/adapters"
+import {
+	mapPlaidAccountToDatabase,
+	mapPlaidTransactionToDatabase,
+} from "@/lib/plaid/adapters"
 import type { SyncPlaidAccountsAndTransactionsResponse } from "@/lib/schemas/api"
 
 // --------------------------------------------------------------------------------
@@ -45,35 +47,56 @@ export async function POST() {
 			)
 
 			// Get the transactions.
-			const createdTransactions: TransactionsSyncResponse["added"] = []
-			const updatedTransactions: TransactionsSyncResponse["modified"] = []
-			const deletedTransactions: TransactionsSyncResponse["removed"] = []
+			const createdPlaidTransactions = []
+			const updatedPlaidTransactions = []
+			const deletedPlaidTransactions = []
 
 			let plaidNextCursor = plaidCursor ?? undefined
 			let plaidMorePages: boolean
 
 			do {
-				const { added, modified, removed, next_cursor, has_more } = (
+				const {
+					added: created,
+					modified: updated,
+					removed: deleted,
+					next_cursor: nextCursor,
+					has_more: hasMore,
+				} = (
 					await plaidClient.transactionsSync({
 						access_token: plaidAccessToken,
 						cursor: plaidNextCursor,
 					})
 				).data
 
-				createdTransactions.push(...added)
-				updatedTransactions.push(...modified)
-				deletedTransactions.push(...removed)
-				plaidNextCursor = next_cursor
-				plaidMorePages = has_more
+				createdPlaidTransactions.push(
+					...created.map((createdPlaidTransaction) =>
+						mapPlaidTransactionToDatabase(createdPlaidTransaction),
+					),
+				)
+
+				updatedPlaidTransactions.push(
+					...updated.map((updatedPlaidTransaction) =>
+						mapPlaidTransactionToDatabase(updatedPlaidTransaction),
+					),
+				)
+
+				deletedPlaidTransactions.push(
+					...deleted.map(
+						(deletedPlaidTransaction) => deletedPlaidTransaction.transaction_id,
+					),
+				)
+
+				plaidNextCursor = nextCursor
+				plaidMorePages = hasMore
 			} while (plaidMorePages)
 
 			// Sync.
 			const counts = await syncAccountsAndTransactions(
 				connectionId,
 				plaidAccounts,
-				createdTransactions,
-				updatedTransactions,
-				deletedTransactions,
+				createdPlaidTransactions,
+				updatedPlaidTransactions,
+				deletedPlaidTransactions,
 				plaidNextCursor,
 			)
 
