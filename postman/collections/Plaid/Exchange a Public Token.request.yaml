@@ -1,0 +1,33 @@
+$kind: http-request
+name: Exchange a Public Token
+url: "{{baseUrl}}/api/plaid/exchange-public-token"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "plaidPublicToken": "{{plaidPublicToken}}"
+    }
+scripts:
+  - type: beforeRequest
+    code: |
+      // Get the public token.
+      const response = await pm.sendRequest({
+        url: "https://sandbox.plaid.com/sandbox/public_token/create",
+        method: "POST",
+        header: { "Content-Type": "application/json" },
+        body: {
+          mode: "raw",
+          raw: JSON.stringify({
+            client_id: pm.environment.get("plaidClientId"),
+            secret: pm.environment.get("plaidSecret"),
+            institution_id: "ins_3",
+            initial_products: ["transactions"],
+          }),
+        },
+      })
+
+      pm.environment.set("plaidPublicToken", response.json().public_token)
+    language: text/javascript
+examples: .resources/Exchange a Public Token.resources/examples
+order: 3948254137713372

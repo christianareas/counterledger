@@ -8,6 +8,20 @@
       "when": 1772690816992,
       "tag": "0000_small_red_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773544669454,
+      "tag": "0001_blue_iron_fist",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775950477184,
+      "tag": "0002_blue_gideon",
+      "breakpoints": true
     }
   ]
 }

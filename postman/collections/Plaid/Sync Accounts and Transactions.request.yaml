@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/plaid/sync"
+method: POST
+body:
+  type: json
+  content: ""
+examples: .resources/Sync Accounts and Transactions.resources/examples
+order: 4298082483840309
