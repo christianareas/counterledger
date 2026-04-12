@@ -56,9 +56,12 @@ export async function POST() {
 			catchPlaidError(error) ??
 			catchDatabaseError(
 				error,
-				"Couldn't save the accounts and transactions.",
+				"Couldn't save the connections' accounts and transactions.",
 			) ??
-			catchServerError(error, "Couldn't sync the accounts and transactions.")
+			catchServerError(
+				error,
+				"Couldn't sync the connections' accounts and transactions.",
+			)
 		)
 	}
 }

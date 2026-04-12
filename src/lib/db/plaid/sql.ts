@@ -179,7 +179,7 @@ export async function syncAccountsAndTransactions(
 
 			if (!accountId) {
 				console.warn(
-					`No plaidAccountId ${plaidAccountId} in the database for plaidTransactionId ${plaidTransactionId}.`,
+					`No plaidAccountId ${plaidAccountId} found in the database for plaidTransactionId ${plaidTransactionId}.`,
 				)
 				continue
 			}
