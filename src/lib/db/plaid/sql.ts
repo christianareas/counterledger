@@ -96,7 +96,7 @@ export async function syncAccountsAndTransactions(
 	plaidAccounts: PlaidAccount[],
 	createdPlaidTransactions: PlaidTransaction[],
 	updatedPlaidTransactions: PlaidTransaction[],
-	deletedPlaidTransactions: string[],
+	deletedPlaidTransactionIds: string[],
 	plaidCursor: string | undefined,
 ) {
 	return db.transaction(async (tx) => {
@@ -197,7 +197,7 @@ export async function syncAccountsAndTransactions(
 		}
 
 		// Delete transactions.
-		for (const deletedPlaidTransactionId of deletedPlaidTransactions) {
+		for (const deletedPlaidTransactionId of deletedPlaidTransactionIds) {
 			await tx
 				.delete(transactions)
 				.where(eq(transactions.plaidTransactionId, deletedPlaidTransactionId))

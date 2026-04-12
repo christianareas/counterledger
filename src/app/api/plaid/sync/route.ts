@@ -49,7 +49,7 @@ export async function POST() {
 			// Get the transactions.
 			const createdPlaidTransactions = []
 			const updatedPlaidTransactions = []
-			const deletedPlaidTransactions = []
+			const deletedPlaidTransactionIds = []
 
 			let plaidNextCursor = plaidCursor ?? undefined
 			let plaidMorePages: boolean
@@ -80,7 +80,7 @@ export async function POST() {
 					),
 				)
 
-				deletedPlaidTransactions.push(
+				deletedPlaidTransactionIds.push(
 					...deleted.map(
 						(deletedPlaidTransaction) => deletedPlaidTransaction.transaction_id,
 					),
@@ -96,7 +96,7 @@ export async function POST() {
 				plaidAccounts,
 				createdPlaidTransactions,
 				updatedPlaidTransactions,
-				deletedPlaidTransactions,
+				deletedPlaidTransactionIds,
 				plaidNextCursor,
 			)
 
