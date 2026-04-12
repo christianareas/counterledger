@@ -53,3 +53,15 @@ export type SyncPlaidAccountsAndTransactionsResponse = z.infer<
 >
 
 // --------------------------------------------------------------------------------
+// Plaid webhook.
+// --------------------------------------------------------------------------------
+
+export const PlaidWebhookRequest = z.object({
+	webhook_type: z.string(),
+	webhook_code: z.string(),
+	item_id: z.string(),
+})
+
+export type PlaidWebhookRequest = z.infer<typeof PlaidWebhookRequest>
+
+// --------------------------------------------------------------------------------

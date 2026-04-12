@@ -23,6 +23,7 @@ export async function POST() {
 			products: [Products.Transactions],
 			country_codes: [CountryCode.Us],
 			language: "en",
+			webhook: process.env.PLAID_WEBHOOK_URL,
 		})
 
 		// Return the token.

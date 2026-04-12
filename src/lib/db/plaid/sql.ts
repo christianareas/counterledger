@@ -64,6 +64,19 @@ export async function getConnections() {
 }
 
 // --------------------------------------------------------------------------------
+// Get a connection by its Plaid item ID.
+// --------------------------------------------------------------------------------
+
+export async function getConnectionByPlaidItemId(plaidItemId: string) {
+	const [connection] = await db
+		.select()
+		.from(connections)
+		.where(eq(connections.plaidItemId, plaidItemId))
+
+	return connection
+}
+
+// --------------------------------------------------------------------------------
 // Create an institution and connection.
 // --------------------------------------------------------------------------------
 
