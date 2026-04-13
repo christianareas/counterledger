@@ -13,6 +13,7 @@ import {
 import { createInstitutionAndConnection } from "@/lib/db/plaid/sql"
 import { plaidClient } from "@/lib/plaid"
 import { mapPlaidInstitutionToDatabase } from "@/lib/plaid/adapters"
+import { syncConnectionAccountsAndTransactions } from "@/lib/plaid/sync"
 import {
 	ExchangePlaidPublicTokenRequest,
 	type ExchangePlaidPublicTokenResponse,
@@ -63,6 +64,13 @@ export async function POST(request: NextRequest) {
 				plaidItemId,
 			},
 		)
+
+		// Sync the connection's accounts and transactions.
+		await syncConnectionAccountsAndTransactions({
+			connectionId,
+			plaidAccessToken,
+			plaidCursor: null,
+		})
 
 		// Return the connection ID.
 		return NextResponse.json<ExchangePlaidPublicTokenResponse>(
