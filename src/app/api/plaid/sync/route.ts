@@ -28,7 +28,7 @@ export async function POST() {
 		let updatedTransactionsCount = 0
 		let deletedTransactionsCount = 0
 
-		// Sync all accounts and transactions.
+		// Sync the connections' accounts and transactions.
 		for (const connection of connections) {
 			const counts = await syncConnectionAccountsAndTransactions(connection)
 
