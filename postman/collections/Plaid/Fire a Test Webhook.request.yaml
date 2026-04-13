@@ -1,0 +1,14 @@
+$kind: http-request
+name: Fire a Test Webhook
+url: https://sandbox.plaid.com/sandbox/item/fire_webhook
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "client_id": "{{plaidClientId}}",
+      "secret": "{{plaidSecret}}",
+      "access_token": "access-sandbox-4aa06580-a6ee-4ca1-895c-3e2ee9dd6e18",
+      "webhook_code": "SYNC_UPDATES_AVAILABLE"
+    }
+order: 4360962667705381
