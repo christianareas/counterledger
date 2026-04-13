@@ -10,6 +10,7 @@
 	},
 	"scripts": {
 		"dev": "next dev -p 3200",
+		"dev:tunnel": "ngrok http 3200",
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint",
