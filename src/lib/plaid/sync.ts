@@ -7,7 +7,7 @@ import { plaidClient } from "@/lib/plaid"
 import {
 	mapPlaidAccountToDatabase,
 	mapPlaidTransactionToDatabase,
-} from "@/lib/plaid/adapters"
+} from "@/lib/plaid/map"
 
 // --------------------------------------------------------------------------------
 // Sync a connection's accounts and transactions.
