@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/auth/sign-up/email"
+method: POST
+headers:
+  Origin: "{{baseUrl}}"
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{betterAuthEmail}}",
+      "password": "{{betterAuthPassword}}",
+      "name": "{{betterAuthFullName}}",
+      "firstName": "{{betterAuthFirstName}}",
+      "middleName": "{{betterAuthMiddleName}}",
+      "lastName": "{{betterAuthLastName}}"
+    }
+order: 1000000000000

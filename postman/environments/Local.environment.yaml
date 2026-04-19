@@ -12,3 +12,21 @@ values:
   - key: plaidPublicToken
     value: ''
     enabled: true
+  - key: betterAuthEmail
+    value: ''
+    enabled: true
+  - key: betterAuthPassword
+    value: ''
+    enabled: true
+  - key: betterAuthFullName
+    value: ''
+    enabled: true
+  - key: betterAuthFirstName
+    value: ''
+    enabled: true
+  - key: betterAuthMiddleName
+    value: ''
+    enabled: true
+  - key: betterAuthLastName
+    value: ''
+    enabled: true
