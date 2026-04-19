@@ -22,11 +22,6 @@ export const auth = betterAuth({
 			verification: schema.verifications,
 		},
 	}),
-	advanced: {
-		database: {
-			generateId: () => randomUUID(),
-		},
-	},
 	user: {
 		modelName: "users",
 		fields: {
@@ -64,6 +59,15 @@ export const auth = betterAuth({
 	},
 	verification: {
 		modelName: "verifications",
+	},
+	advanced: {
+		database: {
+			generateId: () => randomUUID(),
+		},
+	},
+	emailAndPassword: {
+		enabled: true,
+		requireEmailVerification: false,
 	},
 })
 
