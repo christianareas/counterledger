@@ -32,6 +32,20 @@ export const auth = betterAuth({
 		fields: {
 			name: "fullName",
 		},
+		additionalFields: {
+			firstName: {
+				type: "string",
+				required: true,
+			},
+			middleName: {
+				type: "string",
+				required: false,
+			},
+			lastName: {
+				type: "string",
+				required: true,
+			},
+		},
 	},
 	session: {
 		modelName: "sessions",
