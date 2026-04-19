@@ -2,9 +2,11 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
+import { randomUUID } from "node:crypto"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/lib/db"
+import * as schema from "@/lib/db/schema"
 
 // --------------------------------------------------------------------------------
 // Auth.
@@ -13,7 +15,42 @@ import { db } from "@/lib/db"
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
+		schema: {
+			user: schema.users,
+			session: schema.sessions,
+			account: schema.identities,
+			verification: schema.verifications,
+		},
 	}),
+	advanced: {
+		database: {
+			generateId: () => randomUUID(),
+		},
+	},
+	user: {
+		modelName: "users",
+		fields: {
+			name: "fullName",
+		},
+	},
+	session: {
+		modelName: "sessions",
+	},
+	account: {
+		modelName: "identities",
+		fields: {
+			accountId: "providerAccountId",
+			accessToken: "providerAccessToken",
+			refreshToken: "providerRefreshToken",
+			idToken: "providerIdToken",
+			accessTokenExpiresAt: "providerAccessTokenExpiresAt",
+			refreshTokenExpiresAt: "providerRefreshTokenExpiresAt",
+			scope: "providerScope",
+		},
+	},
+	verification: {
+		modelName: "verifications",
+	},
 })
 
 // --------------------------------------------------------------------------------

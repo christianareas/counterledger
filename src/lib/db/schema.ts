@@ -19,8 +19,11 @@ import {
 export const users = pgTable(
 	"users",
 	{
-		userId: uuid("user_id").primaryKey(), // Primary key.
-		name: text("name").notNull(),
+		id: uuid("user_id").primaryKey(), // Primary key.
+		fullName: text("full_name").notNull(),
+		firstName: text("first_name").notNull(),
+		middleName: text("middle_name"),
+		lastName: text("last_name").notNull(),
 		email: text("email").notNull().unique(),
 		emailVerified: boolean("email_verified").notNull().default(false),
 		image: text("image"),
@@ -37,10 +40,10 @@ export const users = pgTable(
 export const sessions = pgTable(
 	"sessions",
 	{
-		sessionId: uuid("session_id").primaryKey(), // Primary key.
+		id: uuid("session_id").primaryKey(), // Primary key.
 		userId: uuid("user_id")
 			.notNull()
-			.references(() => users.userId, { onDelete: "cascade" }), // Foreign key.
+			.references(() => users.id, { onDelete: "cascade" }), // Foreign key.
 		token: text("token").notNull().unique(),
 		expiresAt: timestamp("expires_at").notNull(),
 		ipAddress: text("ip_address"),
@@ -58,10 +61,10 @@ export const sessions = pgTable(
 export const identities = pgTable(
 	"identities",
 	{
-		identityId: uuid("identity_id").primaryKey(), // Primary key.
+		id: uuid("identity_id").primaryKey(), // Primary key.
 		userId: uuid("user_id")
 			.notNull()
-			.references(() => users.userId, { onDelete: "cascade" }), // Foreign key.
+			.references(() => users.id, { onDelete: "cascade" }), // Foreign key.
 		providerId: text("provider_id").notNull(),
 		providerAccountId: text("provider_account_id").notNull(),
 		providerAccessToken: text("provider_access_token"),
@@ -86,7 +89,7 @@ export const identities = pgTable(
 export const verifications = pgTable(
 	"verifications",
 	{
-		verificationId: uuid("verification_id").primaryKey(), // Primary key.
+		id: uuid("verification_id").primaryKey(), // Primary key.
 		identifier: text("identifier").notNull(),
 		value: text("value").notNull(),
 		expiresAt: timestamp("expires_at").notNull(),
@@ -103,10 +106,8 @@ export const verifications = pgTable(
 export const connections = pgTable(
 	"connections",
 	{
-		connectionId: uuid("connection_id").primaryKey(), // Primary key.
-		institutionId: uuid("institution_id").references(
-			() => institutions.institutionId,
-		), // Foreign key.
+		id: uuid("connection_id").primaryKey(), // Primary key.
+		institutionId: uuid("institution_id").references(() => institutions.id), // Foreign key.
 		plaidAccessToken: text("plaid_access_token").notNull(),
 		plaidItemId: text("plaid_item_id").notNull(),
 		plaidCursor: text("plaid_cursor"),
@@ -123,10 +124,10 @@ export const connections = pgTable(
 export const accounts = pgTable(
 	"accounts",
 	{
-		accountId: uuid("account_id").primaryKey(), // Primary key.
+		id: uuid("account_id").primaryKey(), // Primary key.
 		connectionId: uuid("connection_id")
 			.notNull()
-			.references(() => connections.connectionId, { onDelete: "cascade" }), // Foreign key.
+			.references(() => connections.id, { onDelete: "cascade" }), // Foreign key.
 		plaidAccountId: text("plaid_account_id").notNull().unique(),
 		plaidAccountName: text("plaid_account_name").notNull(),
 		plaidAccountType: text("plaid_account_type").notNull(),
@@ -148,10 +149,10 @@ export const accounts = pgTable(
 export const transactions = pgTable(
 	"transactions",
 	{
-		transactionId: uuid("transaction_id").primaryKey(), // Primary key.
+		id: uuid("transaction_id").primaryKey(), // Primary key.
 		accountId: uuid("account_id")
 			.notNull()
-			.references(() => accounts.accountId, { onDelete: "cascade" }), // Foreign key.
+			.references(() => accounts.id, { onDelete: "cascade" }), // Foreign key.
 		plaidAccountId: text("plaid_account_id").notNull(),
 		plaidTransactionId: text("plaid_transaction_id").notNull().unique(),
 		plaidName: text("plaid_name").notNull(),
@@ -184,7 +185,7 @@ export const transactions = pgTable(
 export const institutions = pgTable(
 	"institutions",
 	{
-		institutionId: uuid("institution_id").primaryKey(), // Primary key.
+		id: uuid("institution_id").primaryKey(), // Primary key.
 		plaidInstitutionId: text("plaid_institution_id").notNull(),
 		plaidInstitutionName: text("plaid_institution_name").notNull(),
 		plaidInstitutionLogo: text("plaid_institution_logo"),

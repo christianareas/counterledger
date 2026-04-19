@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
 		// Sync the connection's accounts and transactions.
 		await syncConnectionAccountsAndTransactions({
-			connectionId,
+			id: connectionId,
 			plaidAccessToken,
 			plaidCursor: null,
 		})

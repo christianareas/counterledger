@@ -90,10 +90,12 @@ export async function createInstitutionAndConnection(
 
 	// Insert institution and connection.
 	await db.transaction(async (tx) => {
-		await tx.insert(institutions).values({ institutionId, ...plaidInstitution })
+		await tx
+			.insert(institutions)
+			.values({ id: institutionId, ...plaidInstitution })
 		await tx
 			.insert(connections)
-			.values({ connectionId, institutionId, ...plaidConnection })
+			.values({ id: connectionId, institutionId, ...plaidConnection })
 	})
 
 	// Return the connection ID.
@@ -134,15 +136,15 @@ export async function syncAccountsAndTransactions(
 			if (!account) {
 				const createdAccountId = randomUUID()
 				await tx.insert(accounts).values({
+					id: createdAccountId,
 					connectionId,
-					accountId: createdAccountId,
 					plaidAccountId,
 					...accountFields,
 				})
 
 				plaidAccountIdToAccountMap.set(plaidAccountId, {
+					id: createdAccountId,
 					connectionId,
-					accountId: createdAccountId,
 					...plaidAccount,
 					createdAt: new Date(),
 					updatedAt: new Date(),
@@ -174,8 +176,7 @@ export async function syncAccountsAndTransactions(
 		for (const createdPlaidTransaction of createdPlaidTransactions) {
 			const { plaidAccountId, plaidTransactionId, ...transactionFields } =
 				createdPlaidTransaction
-			const accountId =
-				plaidAccountIdToAccountMap.get(plaidAccountId)?.accountId
+			const accountId = plaidAccountIdToAccountMap.get(plaidAccountId)?.id
 
 			if (!accountId) {
 				console.warn(
@@ -187,8 +188,8 @@ export async function syncAccountsAndTransactions(
 			await tx
 				.insert(transactions)
 				.values({
+					id: randomUUID(),
 					accountId,
-					transactionId: randomUUID(),
 					plaidAccountId,
 					plaidTransactionId,
 					...transactionFields,
@@ -232,7 +233,7 @@ export async function syncAccountsAndTransactions(
 		await tx
 			.update(connections)
 			.set({ plaidCursor, updatedAt: new Date() })
-			.where(eq(connections.connectionId, connectionId))
+			.where(eq(connections.id, connectionId))
 
 		return {
 			createdAccountsCount,
