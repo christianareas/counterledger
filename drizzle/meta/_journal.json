@@ -22,6 +22,20 @@
       "when": 1775950477184,
       "tag": "0002_blue_gideon",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776560068835,
+      "tag": "0003_loud_warhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776573484476,
+      "tag": "0004_overjoyed_the_fury",
+      "breakpoints": true
     }
   ]
 }

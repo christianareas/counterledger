@@ -1,5 +1,4 @@
 $kind: http-request
-name: Exchange a Public Token
 url: "{{baseUrl}}/api/plaid/exchange-public-token"
 method: POST
 body:

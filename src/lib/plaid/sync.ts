@@ -7,18 +7,18 @@ import { plaidClient } from "@/lib/plaid"
 import {
 	mapPlaidAccountToDatabase,
 	mapPlaidTransactionToDatabase,
-} from "@/lib/plaid/adapters"
+} from "@/lib/plaid/map"
 
 // --------------------------------------------------------------------------------
 // Sync a connection's accounts and transactions.
 // --------------------------------------------------------------------------------
 
 export async function syncConnectionAccountsAndTransactions(connection: {
-	connectionId: string
+	id: string
 	plaidAccessToken: string
 	plaidCursor: string | null
 }) {
-	const { connectionId, plaidAccessToken, plaidCursor } = connection
+	const { id, plaidAccessToken, plaidCursor } = connection
 
 	// Get the accounts.
 	const plaidAccounts = (
@@ -73,7 +73,7 @@ export async function syncConnectionAccountsAndTransactions(connection: {
 
 	// Sync.
 	return syncAccountsAndTransactions(
-		connectionId,
+		id,
 		plaidAccounts,
 		createdPlaidTransactions,
 		updatedPlaidTransactions,

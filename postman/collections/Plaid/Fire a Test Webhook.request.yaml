@@ -1,5 +1,4 @@
 $kind: http-request
-name: Fire a Test Webhook
 url: https://sandbox.plaid.com/sandbox/item/fire_webhook
 method: POST
 body:

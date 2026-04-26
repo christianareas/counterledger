@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/auth/get-session"
+method: GET
+order: 3000000000000
