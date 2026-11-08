@@ -16,9 +16,7 @@ if (!plaidEnvironment) {
 	throw new Error("There's no PLAID_ENV environment variable.")
 }
 
-const plaidBasePath = PlaidEnvironments[plaidEnvironment]
-
-if (!plaidBasePath) {
+if (plaidEnvironment !== "sandbox" && plaidEnvironment !== "production") {
 	throw new Error(
 		"The PLAID_ENV environment variable must be sandbox or production.",
 	)
@@ -37,7 +35,7 @@ if (!plaidSecret) {
 // --------------------------------------------------------------------------------
 
 const configuration = new Configuration({
-	basePath: plaidBasePath,
+	basePath: PlaidEnvironments[plaidEnvironment],
 	baseOptions: {
 		headers: {
 			"PLAID-CLIENT-ID": plaidClientId,
