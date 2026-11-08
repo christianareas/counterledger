@@ -13,7 +13,6 @@
 		"dev:tunnel": "ngrok http 3200",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint",
 		"reinstall": "rm -rf node_modules .next package-lock.json && npm i",
 		"update:latest": "npx -y npm-check-updates -u && npm i && npm dedupe && npm outdated && npm ls",
 		"biome:check": "npx biome check",
@@ -43,8 +42,6 @@
 		"@types/react-dom": "^19",
 		"dotenv": "^17.4.2",
 		"drizzle-kit": "^0.31.10",
-		"eslint": "^10.2.0",
-		"eslint-config-next": "16.2.3",
 		"tailwindcss": "^4",
 		"typescript": "^6"
 	}

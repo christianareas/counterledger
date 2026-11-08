@@ -22,6 +22,10 @@
 		}
 	},
 	"linter": {
+		"domains": {
+			"next": "recommended",
+			"react": "recommended"
+		},
 		"enabled": true,
 		"rules": {
 			"nursery": {
