@@ -77,8 +77,8 @@ Run each script with `npm run <script>`.
 | Script                   | What It Does |
 | ------------------------ | ------------ |
 | `typecheck`              | Type-checks the project with TypeScript, without emitting files. |
-| `lint:all`               | Runs `lint:markdown`, and then `lint:code`, even if `lint:markdown` fails. |
-| `lint:all:write`         | Runs `lint:markdown:write`, and then `lint:code:write`, even if `lint:markdown:write` fails. |
+| `lint:all`               | Runs `lint:markdown` and, if it passes, `lint:code`. |
+| `lint:all:write`         | Runs `lint:markdown:write` and, if it passes, `lint:code:write`. |
 | `lint:code`              | Checks the formatting, lint rules, and import order of code and config files with Biome. |
 | `lint:code:write`        | Runs `lint:code`, and applies safe fixes. |
 | `lint:code:write:unsafe` | Runs `lint:code`, and applies safe and unsafe fixes. Review the changes before you commit. |
