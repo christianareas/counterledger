@@ -2,7 +2,7 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
-import type { AccountBase, Institution, Transaction } from "plaid"
+import type { AccountBase, Institution, Transaction } from "plaid/legacy"
 
 // --------------------------------------------------------------------------------
 // Map Plaid fields to database fields.

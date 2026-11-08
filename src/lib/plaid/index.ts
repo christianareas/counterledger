@@ -2,7 +2,7 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
-import { Configuration, PlaidApi, PlaidEnvironments } from "plaid"
+import { Configuration, PlaidApi, PlaidEnvironments } from "plaid/legacy"
 
 // --------------------------------------------------------------------------------
 // Environment variables.
@@ -14,6 +14,12 @@ const plaidSecret = process.env.PLAID_SECRET
 
 if (!plaidEnvironment) {
 	throw new Error("There's no PLAID_ENV environment variable.")
+}
+
+if (plaidEnvironment !== "sandbox" && plaidEnvironment !== "production") {
+	throw new Error(
+		"The PLAID_ENV environment variable must be sandbox or production.",
+	)
 }
 
 if (!plaidClientId) {

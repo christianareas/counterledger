@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude code
+.claude/worktrees/
+
+# rumdl
+.rumdl_cache/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------
 
 import { type NextRequest, NextResponse } from "next/server"
-import { CountryCode } from "plaid"
+import { CountryCode } from "plaid/legacy"
 import {
 	catchDatabaseError,
 	catchPlaidError,

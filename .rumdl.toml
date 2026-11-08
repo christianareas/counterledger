@@ -1,0 +1,18 @@
+# rumdl settings
+# Anything that's not set uses rumdl's defaults (https://rumdl.dev/global-settings/ or each rule's page).
+# To see the defaults, run `rumdl config --defaults`.
+
+[global] # https://rumdl.dev/global-settings/
+extend-enable = ["table-format"] # https://rumdl.dev/md060/
+exclude = [".git"]
+respect-gitignore = true
+
+[ul-indent] # https://rumdl.dev/md007/
+indent = 2
+
+[line-length] # https://rumdl.dev/md013/
+line-length = 0
+
+[table-format] # https://rumdl.dev/md060/
+style = "aligned"
+loose-last-column = true
