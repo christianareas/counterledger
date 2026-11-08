@@ -8,7 +8,7 @@ It's built with Next.js (App Router), TypeScript, Drizzle, PostgreSQL on Neon, a
 
 ### Requirements
 
-- Node.js 24 or later, and npm 11 or later.
+- Node.js 26 or later, and npm 11 or later.
 - A PostgreSQL database on Neon.
 - A Plaid account and its API keys.
 - Optional: The Vercel CLI, to pull environment variables, and the ngrok CLI, to test Plaid webhooks locally.
@@ -45,17 +45,19 @@ It's built with Next.js (App Router), TypeScript, Drizzle, PostgreSQL on Neon, a
    npm run dev:tunnel
    ```
 
+   A connection keeps the webhook URL it was created with, so create a new connection to test with the tunnel.
+
 ## Environment Variables
 
 Next.js and Drizzle Kit both read these variables from `.env.local`, which Git ignores. If a required variable is missing, the app or Drizzle Kit throws an error that names it.
 
-| Variable            | Required | Purpose                                                                                                                                                                                |
-| ------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`      | Yes      | The connection string for the Neon database. The app and Drizzle Kit both use it.                                                                                                      |
-| `PLAID_ENV`         | Yes      | The Plaid environment to connect to, such as `sandbox` or `production`.                                                                                                                |
-| `PLAID_CLIENT_ID`   | Yes      | The Plaid client ID.                                                                                                                                                                   |
-| `PLAID_SECRET`      | Yes      | The Plaid secret for the environment in `PLAID_ENV`.                                                                                                                                   |
-| `PLAID_WEBHOOK_URL` | No       | The URL that Plaid sends webhooks to, set when the app creates a Link token. Locally, it's the ngrok URL; in production, it's the Vercel URL. Without it, Plaid doesn't send webhooks. |
+| Variable            | Required | Purpose                                                                                                                                                                                                                                                |
+| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DATABASE_URL`      | Yes      | The connection string for the Neon database. The app and Drizzle Kit both use it.                                                                                                                                                                      |
+| `PLAID_ENV`         | Yes      | The Plaid environment to connect to, either `sandbox` or `production`. The app throws an error for any other value.                                                                                                                                    |
+| `PLAID_CLIENT_ID`   | Yes      | The Plaid client ID.                                                                                                                                                                                                                                   |
+| `PLAID_SECRET`      | Yes      | The Plaid secret for the environment in `PLAID_ENV`.                                                                                                                                                                                                   |
+| `PLAID_WEBHOOK_URL` | No       | The full URL that Plaid sends webhooks to, set when the app creates a Link token. Locally, it's the ngrok URL followed by `/api/plaid/webhook`; in production, it's the Vercel URL followed by the same path. Without it, Plaid doesn't send webhooks. |
 
 ## Scripts
 
@@ -83,11 +85,11 @@ Run each script with `npm run <script>`.
 
 ### Dependencies
 
-| Script               | What It Does                                                                                                                                                     |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `reinstall:all`      | Deletes `node_modules`, `.next`, and `package-lock.json`, and then reinstalls every dependency.                                                                  |
-| `update:all`         | Updates every dependency in `package.json` to its latest version with npm-check-updates, installs them, dedupes, and then lists outdated and installed packages. |
-| `audit:dependencies` | Checks the dependencies for known vulnerabilities with `npm audit`.                                                                                              |
+| Script               | What It Does                                                                                                                                                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `reinstall:all`      | Deletes `node_modules`, `.next`, and `package-lock.json`, and then reinstalls every dependency.                                                                                                                                     |
+| `update:all`         | Updates every dependency in `package.json` to its latest version with npm-check-updates, updates their dependencies within their ranges, migrates the Biome configuration, dedupes, and then lists outdated and installed packages. |
+| `audit:dependencies` | Checks the dependencies for known vulnerabilities with `npm audit`.                                                                                                                                                                 |
 
 ### Database
 
