@@ -20,7 +20,7 @@
 		"lint:code:write": "biome check --write",
 		"lint:code:write:unsafe": "biome check --write --unsafe",
 		"reinstall:all": "rm -rf node_modules .next package-lock.json && npm i",
-		"update:all": "npx -y npm-check-updates -u && npm i && npm dedupe && npm outdated && npm ls",
+		"update:all": "npx -y npm-check-updates -u && npm update && biome migrate --write && npm dedupe && npm outdated && npm ls",
 		"audit:dependencies": "npm audit",
 		"vercel:env:pull": "vercel env pull .env.local",
 		"db:generate": "drizzle-kit generate",
