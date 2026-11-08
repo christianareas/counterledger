@@ -2,7 +2,7 @@
 // Dependencies.
 // --------------------------------------------------------------------------------
 
-import { Configuration, PlaidApi, PlaidEnvironments } from "plaid"
+import { Configuration, PlaidApi, PlaidEnvironments } from "plaid/legacy"
 
 // --------------------------------------------------------------------------------
 // Environment variables.

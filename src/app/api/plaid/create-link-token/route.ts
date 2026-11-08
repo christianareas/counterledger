@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------
 
 import { NextResponse } from "next/server"
-import { CountryCode, Products } from "plaid"
+import { CountryCode, Products } from "plaid/legacy"
 import { catchPlaidError, catchServerError } from "@/lib/api/errors"
 import { plaidClient } from "@/lib/plaid"
 import type { CreatePlaidLinkTokenResponse } from "@/lib/schemas/api"
