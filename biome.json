@@ -13,7 +13,10 @@
 		}
 	},
 	"files": {
-		"includes": ["**/*.{css,js,json,jsonc,jsx,mjs,ts,tsx}", "!drizzle"]
+		"includes": [
+			"**/*.{cjs,css,cts,js,json,jsonc,jsx,mjs,mts,ts,tsx}",
+			"!drizzle"
+		]
 	},
 	"formatter": {
 		"enabled": true
