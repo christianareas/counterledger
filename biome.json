@@ -12,6 +12,9 @@
 			"tailwindDirectives": true
 		}
 	},
+	"files": {
+		"includes": ["**", "!drizzle"]
+	},
 	"formatter": {
 		"enabled": true
 	},
