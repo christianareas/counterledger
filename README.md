@@ -83,11 +83,11 @@ Run each script with `npm run <script>`.
 
 ### Dependencies
 
-| Script               | What It Does                                                                                                                                                  |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `reinstall:all`      | Deletes `node_modules`, `.next`, and `package-lock.json`, and then reinstalls every dependency.                                                               |
-| `update:all`         | Updates every dependency in `package.json` to its latest version with npm-check-updates, reinstalls, dedupes, and then lists outdated and installed packages. |
-| `audit:dependencies` | Checks the dependencies for known vulnerabilities with `npm audit`.                                                                                           |
+| Script               | What It Does                                                                                                                                                     |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `reinstall:all`      | Deletes `node_modules`, `.next`, and `package-lock.json`, and then reinstalls every dependency.                                                                  |
+| `update:all`         | Updates every dependency in `package.json` to its latest version with npm-check-updates, installs them, dedupes, and then lists outdated and installed packages. |
+| `audit:dependencies` | Checks the dependencies for known vulnerabilities with `npm audit`.                                                                                              |
 
 ### Database
 
