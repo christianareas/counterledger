@@ -1,0 +1,22 @@
+name: Task
+description: Add a task to the CounterLedger board.
+projects: ["christianareas/5"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      value: |
+        Summary.
+
+        To-Dos:
+
+        - [ ] ...
+
+        Out of Scope:
+
+        - ...
+
+        Depends on #.
+    validations:
+      required: true

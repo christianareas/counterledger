@@ -16,3 +16,6 @@ line-length = 0
 [table-format] # https://rumdl.dev/md060/
 style = "aligned"
 loose-last-column = true
+
+[per-file-ignores] # https://rumdl.dev/global-settings/#per-file-ignores
+".github/pull_request_template.md" = ["first-line-heading"] # https://rumdl.dev/md041/
