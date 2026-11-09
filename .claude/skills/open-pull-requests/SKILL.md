@@ -90,4 +90,4 @@ Use the `create-and-manage-issues` skill. A Dependabot PR has its own item on th
 
 ### Say the PR Is Ready for Review
 
-Tell the user the PR is ready for review, and link to it.
+Tell the user the PR is ready for review, and link to it. Then ask whether to run `/code-review`, and run it only if the user says to.

@@ -51,7 +51,7 @@ Rules are short instructions that apply to many tasks, or that you need before y
 - If a task's scope changes, update the issue and PR to match.
 - If a PR handles something another open issue lists, remove it from that issue, and say what you removed.
 - Status is To Do when the issue or Dependabot PR is added, In Progress when its worktree is created and while its PR is a draft, In Review when its PR is ready for review, and Done when the PR merges. The board sets To Do and Done; humans and agents set In Progress and In Review.
-- Before you move an issue to In Review, run `/code-review` on the branch and address its findings.
+- When an issue moves to In Review, ask whether to run `/code-review`. Run a review only when the user asks for one.
 
 ### Work in a Worktree
 
