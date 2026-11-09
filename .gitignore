@@ -37,6 +37,7 @@ yarn-error.log*
 .vercel
 
 # claude code
+.claude/settings.local.json
 .claude/worktrees/
 
 # rumdl
