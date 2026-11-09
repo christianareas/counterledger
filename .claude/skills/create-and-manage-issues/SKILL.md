@@ -88,7 +88,7 @@ gh project item-edit --id <item> --project-id PVT_kwHOAGh1f84Bqp8t --field-id PV
 | In Progress | `47fc9ee4` |
 | In Review   | `61e0b9a0` |
 
-Linking a PR to an issue sets In Progress, so set In Review after you open the PR. Then read the status back, because the board can overwrite it:
+Linking a PR to an issue sets In Progress, so set In Review only after the PR is open and ready for review. Then read the status back, because the board can overwrite it:
 
 ```bash
 gh project item-list 5 --owner christianareas --format json --limit 200 --jq '.items[] | select(.content.number == <number>) | .status'

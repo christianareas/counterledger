@@ -50,7 +50,7 @@ Rules are short instructions that apply to many tasks, or that you need before y
 - Before you get started, find or ask for an issue on the [CounterLedger board](https://github.com/users/christianareas/projects/5). If there's none, use the `create-and-manage-issues` skill to create one. Dependabot PRs have no issue, and the board adds each PR on its own.
 - If a task's scope changes, update the issue and PR to match.
 - If a PR handles something another open issue lists, remove it from that issue, and say what you removed.
-- Status is To Do when the issue or Dependabot PR is added, In Progress when its worktree is created, In Review when its PR is ready for review, and Done when the PR merges. The board sets To Do and Done; humans and agents set In Progress and In Review.
+- Status is To Do when the issue or Dependabot PR is added, In Progress when its worktree is created and while its PR is a draft, In Review when its PR is ready for review, and Done when the PR merges. The board sets To Do and Done; humans and agents set In Progress and In Review.
 - Before you move an issue to In Review, run `/code-review` on the branch and address its findings.
 
 ### Work in a Worktree
@@ -127,9 +127,8 @@ Rules are short instructions that apply to many tasks, or that you need before y
 
 ### Open and Merge Pull Requests
 
-- Title a PR to match its issue, and keep the title and description matching its current scope.
-- Use `.github/pull_request_template.md`. A description starts with `Closes #<issue-number>`.
-- Say a PR is ready for review. Never say it needs the owner's approval, because GitHub doesn't let anyone approve their own PR.
+- Use the `open-pull-requests` skill to open a PR, as a draft unless the user asks otherwise.
+- When a PR is ready for review, say so. Never say it needs the owner's approval, because GitHub doesn't let anyone approve their own PR.
 - Merge only when the user says to, using the `add-and-remove-worktrees` skill. `main` requires one approval as a deliberate self-review checkpoint, so don't suggest dropping it.
 
 ## Accepted Risks
@@ -145,6 +144,7 @@ When a skill's description matches your task, read and follow its instructions i
 
 - `add-and-remove-worktrees`: Sets up and enters a worktree for an issue or Dependabot PR, and removes it after the merge. Use when starting a task or merging its PR. Merges only when the user says to.
 - `create-and-manage-issues`: Creates issues on the board, updates them, and moves their status. Use when creating an issue, updating one, or changing its status.
+- `open-pull-requests`: Pushes a task's branch, opens its PR as a draft, and later marks it ready for review and moves its issue to In Review. Use when opening a PR, or when a draft is ready for review. Pushes, opens the PR, and marks it ready only when the user says to.
 
 To keep a skill usable by any agent, put only `name` and `description` in its front matter.
 
