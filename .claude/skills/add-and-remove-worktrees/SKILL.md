@@ -107,7 +107,7 @@ git -C .claude/worktrees/<number> rev-parse HEAD
 gh pr view <number> --json headRefOid --jq .headRefOid
 ```
 
-If `status` prints anything, stop and ask, because the removal will fail. Never add `--force` without asking. Ignored files, such as `.env.local`, `node_modules`, and `.next`, don't block the removal.
+If `status` prints anything, stop and ask, because the removal will fail. Don't add `--force` without asking. Ignored files, such as `.env.local`, `node_modules`, and `.next`, don't block the removal.
 
 If the two commits differ, stop and ask. The merge only includes what's pushed, and `gh` force-deletes the local branch, so unpushed commits would be lost.
 

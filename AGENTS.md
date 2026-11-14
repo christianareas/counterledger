@@ -72,7 +72,7 @@ Skills:
 - Enter the worktree before you edit anything. Until then, a session edits the main checkout.
 - Name a task's worktree `.claude/worktrees/<issue-number>/`, on branch `<issue-number>-<short-name>`. A Dependabot PR's worktree uses the PR number, on Dependabot's branch. Issues and PRs share one number sequence, so a PR's number never matches an issue's.
 - Title a task's session `#<number> <PR title>`, with the issue's number, or the PR's for a Dependabot PR. Until there's a PR, use the issue's title.
-- Never move a worktree the app created for a session. The session's write hook stays registered to the old path, which strands the session.
+- Don't move a worktree the app created for a session. The session's write hook stays registered to the old path, which strands the session.
 - Give each worktree its own `.env.local`, copied from the main checkout, and its own `npm install`.
 - All worktrees share one Neon database and one ngrok tunnel, so only one worktree at a time runs migrations or tests webhooks.
 - A change to `.claude/settings.json` on a branch doesn't apply to a session that started in the main checkout, and a change to `.claude/skills/` may not, so test them after they merge.
@@ -83,12 +83,12 @@ Skills:
 
 ### Branch and Commit
 
-- Never commit or push unless asked. Each set of changes needs its own go-ahead. Humans ask for a change and then review the diff, and there's no diff to review once it's committed.
+- Don't commit or push unless asked. Each set of changes needs its own go-ahead. Humans ask for a change and then review the diff, and there's no diff to review once it's committed.
 - Make one commit per logical change, so each message describes its whole commit.
 - Don't commit debugging code, such as `console.log` calls, or secrets, such as `.env*` files, API keys, or tokens.
 - Write commit messages in the past tense, short and ending with a period, such as "Limited PLAID_ENV to sandbox and production."
-- Never read `.env*` files. To copy one, use `cp`.
-- This repository is public. Never name private repositories or organizations in it, or in issues, PRs, or commits.
+- Don't read `.env*` files. To copy one, use `cp`.
+- This repository is public. Don't name private repositories or organizations in it, or in issues, PRs, or commits.
 
 ### Write Code
 
@@ -126,7 +126,7 @@ Skills:
 
 ### Manage Dependencies
 
-- Write every `package.json` dependency as `^<full version>`, such as `"jose": "^6.2.15"`, never `^6` or an exact pin.
+- Write every `package.json` dependency as `^<full version>`, such as `"jose": "^6.2.15"`, not `^6` or an exact pin.
 - Before you adopt a dependency, explain the trade-offs and ask.
 - Use npm. #11 tracks whether to change package managers.
 
@@ -153,7 +153,7 @@ Skills:
 ### Open and Merge Pull Requests
 
 - Use the `open-pull-requests` skill to open a PR, as a draft unless the user asks otherwise.
-- When a PR is ready for review, say so. Never say it needs the owner's approval, because GitHub doesn't let anyone approve their own PR.
+- When a PR is ready for review, say so. Don't say it needs the owner's approval, because GitHub doesn't let anyone approve their own PR.
 - Merge only when the user says to, using the `add-and-remove-worktrees` skill. `main` requires one approval as a deliberate self-review checkpoint, so don't suggest dropping it.
 
 Skills:

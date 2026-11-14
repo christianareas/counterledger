@@ -35,7 +35,7 @@ If this prints anything, stop and ask, because the PR only includes what's commi
 git push -u origin <branch>
 ```
 
-A task's worktree starts with no upstream, so `-u` sets one. Never add `--force` without asking.
+A task's worktree starts with no upstream, so `-u` sets one. Don't add `--force` without asking.
 
 ### Open the PR
 
