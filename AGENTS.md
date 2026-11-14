@@ -85,6 +85,8 @@ Skills:
 
 - Don't commit or push unless asked. Each set of changes needs its own go-ahead. Humans ask for a change and then review the diff, and there's no diff to review once it's committed.
 - Make one commit per logical change, so each message describes its whole commit.
+- Make one logical change at a time, and propose its commit message with it, so each diff is small enough to review quickly.
+- Stage each change once you've made it, so `git diff --staged` shows exactly what its commit will contain. Before you start a change for a different commit, ask whether to commit the staged one.
 - Don't commit debugging code, such as `console.log` calls, or secrets, such as `.env*` files, API keys, or tokens.
 - Write commit messages in the past tense, short and ending with a period, such as "Limited PLAID_ENV to sandbox and production."
 - Don't read `.env*` files. To copy one, use `cp`.
