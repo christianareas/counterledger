@@ -56,7 +56,7 @@ Don't document something that's documented elsewhere. Link to it instead. For ex
 
 ### Manage Issues
 
-- Before you get started, find or ask for an issue on the [CounterLedger board](https://github.com/users/christianareas/projects/5). If there's none, use the `create-and-manage-issues` skill to create one. Dependabot PRs have no issue, and the board adds each PR on its own.
+- Before you get started, find or ask for an issue on the [CounterLedger board](https://github.com/users/christianareas/projects/5). If there's none, use the `create-and-manage-issues` skill to create one. Dependabot PRs have no issue. The board adds each one on its own, by its `dependencies` label, which #9 sets up.
 - If a task's scope changes, update the issue and PR to match.
 - If a PR handles something another open issue lists, remove it from that issue, and say what you removed.
 - Status is To Do when the issue or Dependabot PR is added, In Progress when its worktree is created and while its PR is a draft, In Review when its PR is ready for review, and Done when the PR merges. The board sets To Do and Done; humans and agents set In Progress and In Review.
