@@ -27,11 +27,17 @@ If the session is in a worktree the app created, which has a random name, stop a
 
 ### Create the Worktree
 
-If `git worktree list` already shows the task's worktree, because an earlier session started the task, skip to [Enter the Worktree](#enter-the-worktree).
-
 Run these from the main checkout. Once a session is in a worktree, Claude Code refuses git commands aimed at the main checkout.
 
-For an issue:
+If `git worktree list` already shows the task's worktree, because an earlier session started the task, skip to [Enter the Worktree](#enter-the-worktree).
+
+If `git branch --list <branch>` shows the task's branch, but `git worktree list` doesn't show its worktree, because something removed it, create the worktree on the existing branch. Leave out `-b`, which fails when the branch already exists:
+
+```bash
+git worktree add .claude/worktrees/<number> <branch>
+```
+
+Otherwise, for an issue:
 
 ```bash
 git fetch origin main
@@ -130,4 +136,4 @@ git worktree remove .claude/worktrees/<number>
 git branch -d <branch>
 ```
 
-Nothing else removes these worktrees, because the app doesn't sweep ones made with `git worktree add`. The board moves the issue to Done on its own.
+The app doesn't remove worktrees made with `git worktree add`, so remove them here. The board moves the issue to Done on its own.
