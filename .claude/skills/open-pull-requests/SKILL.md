@@ -39,15 +39,16 @@ A task's worktree starts with no upstream, so `-u` sets one. Never add `--force`
 
 ### Open the PR
 
-The PR's title matches its issue's. To get it:
+The PR's title matches its issue's, and its description starts from the issue's. To read both:
 
 ```bash
-gh issue view <issue-number> --repo christianareas/counterledger --json title --jq .title
+gh issue view <issue-number> --repo christianareas/counterledger --json title,body
 ```
 
 Write the description to a temporary file, in the shape of `.github/pull_request_template.md`:
 
 - Start with `Closes #<issue-number>`.
+- Write a summary of two or three sentences. Start from the issue's summary, which is the paragraph before `To-Dos:`, and change it to match what the PR does.
 - Copy the issue's To-Dos, and check off each one the PR finishes. Under a To-Do, add anything a reviewer should know, such as why it was done that way.
 - Copy the issue's Out of Scope items. If it has none, leave out `Out of Scope:`.
 
