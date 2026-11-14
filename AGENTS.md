@@ -85,6 +85,7 @@ Skills:
 
 - Never commit or push unless asked. Each set of changes needs its own go-ahead. Humans ask for a change and then review the diff, and there's no diff to review once it's committed.
 - Make one commit per logical change, so each message describes its whole commit.
+- Don't commit debugging code, such as `console.log` calls, or secrets, such as `.env*` files, API keys, or tokens.
 - Write commit messages in the past tense, short and ending with a period, such as "Limited PLAID_ENV to sandbox and production."
 - Never read `.env*` files. To copy one, use `cp`.
 - This repository is public. Never name private repositories or organizations in it, or in issues, PRs, or commits.
@@ -118,6 +119,11 @@ Skills:
 - Have query helpers return `undefined`, not `null`, when there's no result, with no null coalescing.
 - The app stores financial institutions, accounts, balances, and transaction history, along with each connection's `plaidAccessToken`. Bank logins go through Plaid and never touch this app.
 
+### Add Scripts
+
+- If a human or agent runs a command often, you should propose adding it to `scripts` in `package.json`. Its name and order should follow the file's pattern.
+- If the script or command needs further context, add a rule to this file in an appropriate location.
+
 ### Manage Dependencies
 
 - Write every `package.json` dependency as `^<full version>`, such as `"jose": "^6.2.15"`, never `^6` or an exact pin.
@@ -133,14 +139,16 @@ Skills:
 - If you edit Markdown, run `npm run lint:markdown`.
 - If you edit code or config files, run `npm run lint:code`. If you edit `.ts` or `.tsx` files, also run `npm run typecheck`.
 - Before you open a PR or push, run `npm run typecheck`, `npm run lint:all`, and `npm run build`.
+- Biome skips the files the repository's `.gitignore` lists, but not the ones a global excludes file lists. List a tool's local files, such as `.claude/settings.local.json`, in `.gitignore`, or Biome lints them.
 - Biome is the only code linter. Don't add ESLint back, or turn on Biome's YAML or Markdown handling, without asking. Biome's Markdown formatter rewrites rumdl's tables.
 - Add each new linter to `lint:all`.
 
 ### Run the Development Server
 
 - Humans run the development server on ports 3200–3209. Agents use 3210–3219, one per worktree, with `npx next dev -p <port>`.
+- Before you start, see what's running. `lsof -nP -iTCP:3210-3219 -sTCP:LISTEN` lists what's listening on the agents' ports.
 - `dev:tunnel` forwards to port 3200, so an agent on another port runs `ngrok http <port>`.
-- When you're done, stop your server. Never stop or reuse a server outside the agents' range.
+- When you're done, stop your server. You can also stop a server in the agents' range that's no longer in use, but don't stop, restart, or reuse one outside it, which a human may be using.
 
 ### Open and Merge Pull Requests
 
