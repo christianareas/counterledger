@@ -34,16 +34,25 @@ The following sections list this project's main directories and files.
 ### Non-User-Facing Files
 
 - `.claude/settings.json`: Asks before commits, pushes, merges, and PR changes, and denies reading `.env*` files and moving worktrees.
-- `.claude/skills/`: Skills for recurring tasks, one folder per skill. See also [Skills](#skills).
+- `.claude/skills/`: Skills for recurring tasks, one folder per skill. See also [Rules and Skills](#rules-and-skills).
 - `.claude/worktrees/`: One worktree per task. Git ignores it.
 - `.github/`: The PR and issue templates.
 - `biome.json`: Biome's settings, for code and config files.
 - `.rumdl.toml`: rumdl's settings, for Markdown files.
 - `postman/` and `.postman/`: Postman's Git sync writes these.
 
-## Rules
+## Rules and Skills
 
-Rules are short instructions that apply to many tasks, or that you need before you start one. When a rule, or a group of rules, grows into steps for one kind of task, move it to a skill in `.claude/skills/` and add it to [Skills](#skills).
+A rule is a constraint or convention you should always follow. A skill is a procedure (or set of procedures) that may also include scripts and resources. To learn more, see:
+
+- [Steering Claude Code: When to use `CLAUDE.md`, skills, hooks, and subagents](https://claude.com/resources/articles/steering-claude-code-skills-hooks-rules-subagents-and-more)
+- [Agent Skills](https://agentskills.io)
+
+For this project, rules belong in this file (`AGENTS.md`), and skills belong in `.claude/skills/`. If a rule increases in scope (for example, from one step to several, or from a concise sentence to a convoluted one—or a paragraph), consider promoting it to a skill. Propose any such change to a human for approval.
+
+Rules and skills are listed in the following sections, organized by the type of task. If you add a new rule or skill, follow this project's patterns.
+
+Don't document something that's documented elsewhere. Link to it instead. For example, don't document how to use [Drizzle's transactions](https://orm.drizzle.team/docs/transactions). However, you can add further guidance. For example, you can say to name the transaction variable `tx` and why.
 
 ### Manage Issues
 
@@ -52,6 +61,10 @@ Rules are short instructions that apply to many tasks, or that you need before y
 - If a PR handles something another open issue lists, remove it from that issue, and say what you removed.
 - Status is To Do when the issue or Dependabot PR is added, In Progress when its worktree is created and while its PR is a draft, In Review when its PR is ready for review, and Done when the PR merges. The board sets To Do and Done; humans and agents set In Progress and In Review.
 - When an issue moves to In Review, ask whether to run `/code-review`. Run a review only when the user asks for one.
+
+Skills:
+
+- [`create-and-manage-issues`](.claude/skills/create-and-manage-issues/SKILL.md): Creates issues on the board, updates them, and moves their status. Use when creating an issue, updating one, or changing its status.
 
 ### Work in a Worktree
 
@@ -63,6 +76,10 @@ Rules are short instructions that apply to many tasks, or that you need before y
 - Give each worktree its own `.env.local`, copied from the main checkout, and its own `npm install`.
 - All worktrees share one Neon database and one ngrok tunnel, so only one worktree at a time runs migrations or tests webhooks.
 - A change to `.claude/settings.json` on a branch doesn't apply to a session that started in the main checkout, and a change to `.claude/skills/` may not, so test them after they merge.
+
+Skills:
+
+- [`add-and-remove-worktrees`](.claude/skills/add-and-remove-worktrees/SKILL.md): Sets up and enters a worktree for an issue or Dependabot PR, and removes it after the merge. Use when starting a task or merging its PR. Merges only when the user says to.
 
 ### Branch and Commit
 
@@ -131,22 +148,16 @@ Rules are short instructions that apply to many tasks, or that you need before y
 - When a PR is ready for review, say so. Never say it needs the owner's approval, because GitHub doesn't let anyone approve their own PR.
 - Merge only when the user says to, using the `add-and-remove-worktrees` skill. `main` requires one approval as a deliberate self-review checkpoint, so don't suggest dropping it.
 
+Skills:
+
+- [`open-pull-requests`](.claude/skills/open-pull-requests/SKILL.md): Pushes a task's branch, opens its PR as a draft, and later marks it ready for review and moves its issue to In Review. Use when opening a PR, or when a draft is ready for review. Pushes, opens the PR, and marks it ready only when the user says to.
+
 ## Accepted Risks
 
 Don't raise these in reviews:
 
 - `plaid/legacy`: Four files import it until #13 migrates to the new Plaid SDK.
 - The open-ended `engines.node` range (`>=26`): It's deliberate, to run the latest Node.js. If a new major version breaks something, that gets looked into then.
-
-## Skills
-
-When a skill's description matches your task, read and follow its instructions in `.claude/skills/<name>/SKILL.md`:
-
-- `add-and-remove-worktrees`: Sets up and enters a worktree for an issue or Dependabot PR, and removes it after the merge. Use when starting a task or merging its PR. Merges only when the user says to.
-- `create-and-manage-issues`: Creates issues on the board, updates them, and moves their status. Use when creating an issue, updating one, or changing its status.
-- `open-pull-requests`: Pushes a task's branch, opens its PR as a draft, and later marks it ready for review and moves its issue to In Review. Use when opening a PR, or when a draft is ready for review. Pushes, opens the PR, and marks it ready only when the user says to.
-
-To keep a skill usable by any agent, put only `name` and `description` in its front matter.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
