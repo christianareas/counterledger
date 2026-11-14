@@ -33,7 +33,7 @@ The following sections list this project's main directories and files.
 
 ### Non-User-Facing Files
 
-- `.claude/settings.json`: Denies reading `.env*` files, and asks before `gh pr merge`.
+- `.claude/settings.json`: Asks before commits, pushes, merges, and PR changes, and denies reading `.env*` files and moving worktrees.
 - `.claude/skills/`: Skills for recurring tasks, one folder per skill. See also [Skills](#skills).
 - `.claude/worktrees/`: One worktree per task. Git ignores it.
 - `.github/`: The PR and issue templates.
