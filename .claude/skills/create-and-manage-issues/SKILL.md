@@ -65,13 +65,13 @@ gh issue edit <number> --repo christianareas/counterledger --body-file <file>
 
 `AGENTS.md` says when each status applies and who sets it.
 
-Find the issue's item on the board. For a Dependabot PR, use the PR's number.
+Find the issue's item on the board, and its status. For a Dependabot PR, use the PR's number. This looks the item up from the issue, so it works however many items the board has:
 
 ```bash
-gh project item-list 5 --owner christianareas --format json --limit 200 --jq '.items[] | select(.content.number == <number>) | .id'
+gh api graphql -f query='query($number: Int!) { repository(owner: "christianareas", name: "counterledger") { issueOrPullRequest(number: $number) { ... on Issue { projectItems(first: 10) { nodes { id project { number } status: fieldValueByName(name: "Status") { ... on ProjectV2ItemFieldSingleSelectValue { name } } } } } ... on PullRequest { projectItems(first: 10) { nodes { id project { number } status: fieldValueByName(name: "Status") { ... on ProjectV2ItemFieldSingleSelectValue { name } } } } } } } }' -F number=<number> --jq '.data.repository.issueOrPullRequest.projectItems.nodes[] | select(.project.number == 5) | "\(.id) \(.status.name)"'
 ```
 
-If that prints nothing, add the item, and then find it again:
+It prints the item's ID and status. If it prints nothing, add the item, and then run it again:
 
 ```bash
 gh project item-add 5 --owner christianareas --url <issue-or-pr-url>
@@ -88,8 +88,4 @@ gh project item-edit --id <item> --project-id PVT_kwHOAGh1f84Bqp8t --field-id PV
 | In Progress | `47fc9ee4` |
 | In Review   | `61e0b9a0` |
 
-Linking a PR to an issue sets In Progress, so set In Review only after the PR is open and ready for review. Then read the status back, because the board can overwrite it:
-
-```bash
-gh project item-list 5 --owner christianareas --format json --limit 200 --jq '.items[] | select(.content.number == <number>) | .status'
-```
+Linking a PR to an issue sets In Progress, so set In Review only after the PR is open and ready for review. Then run the first command again to read the status back, because the board can overwrite it.
