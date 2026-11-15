@@ -37,18 +37,18 @@ If `git branch --list <branch>` shows the task's branch, but `git worktree list`
 git worktree add .claude/worktrees/<number> <branch>
 ```
 
-Otherwise, for an issue:
+If the branch exists only on the remote, which `git ls-remote --heads origin <branch>` shows, create the worktree from it, so it keeps the PR's commits. Start a Dependabot PR this way too, with its number and its branch, which `gh pr view <number> --json headRefName` shows:
+
+```bash
+git fetch origin <branch>
+git worktree add --track -b <branch> .claude/worktrees/<number> origin/<branch>
+```
+
+Otherwise, start a new branch for the issue:
 
 ```bash
 git fetch origin main
 git worktree add --no-track -b <issue-number>-<short-name> .claude/worktrees/<issue-number> origin/main
-```
-
-For a Dependabot PR, use its number and its branch, which `gh pr view <number> --json headRefName` shows:
-
-```bash
-git fetch origin <branch>
-git worktree add --track -b <branch> .claude/worktrees/<pr-number> origin/<branch>
 ```
 
 ### Copy `.env.local`
