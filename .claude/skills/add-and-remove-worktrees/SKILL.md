@@ -77,7 +77,7 @@ npm warns that it skipped install scripts for esbuild and fsevents. That's expec
 
 ### Name the Session
 
-If you can name sessions, title the session `#<number> <PR title>`. Until there's a PR, use the issue's title. If the PR's title changes, rename the session to match.
+If you can name sessions, title the session `#<number> <PR title>`, with the issue's number, or the PR's for a Dependabot PR. Until there's a PR, use the issue's title. If the PR's title changes, rename the session to match.
 
 For example, Claude can call `set_session_title` with `session_id` set to `self`.
 
