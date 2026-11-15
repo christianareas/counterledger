@@ -21,7 +21,7 @@ It's built with Next.js (App Router), TypeScript, Drizzle, PostgreSQL on Neon, a
    npm install
    ```
 
-2. Create `.env.local` with the variables in [Environment Variables](#environment-variables). If the Vercel CLI is linked to the project, you can pull them instead:
+2. Copy `.env.example` to `.env.local`, and fill in the variables in [Environment Variables](#environment-variables). If the Vercel CLI is linked to the project, you can pull them instead:
 
    ```bash
    npm run vercel:env:pull
