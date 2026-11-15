@@ -91,9 +91,10 @@ Do this only when the user says to merge. What `gh` does here comes from reading
 
 ```bash
 gh pr checks <number>
+gh pr view <number> --json isDraft --jq .isDraft
 ```
 
-Any non-zero exit code means don't merge yet, so tell the user. `--admin` bypasses required checks, so this is the only check before merging.
+Any non-zero exit code from `gh pr checks` means don't merge yet, so tell the user. If the second command prints `true`, the PR is still a draft, so ask whether to mark it ready first, with the `open-pull-requests` skill. `--admin` bypasses required checks, so these are the only checks before merging.
 
 ### Change to the Main Checkout
 
