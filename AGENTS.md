@@ -52,7 +52,7 @@ For this project, rules belong in this file (`AGENTS.md`), and skills belong in 
 
 Rules and skills are listed in the following sections, organized by the type of task. If you add a new rule or skill, follow this project's patterns.
 
-Write rules and skills so any agent can follow them. `.claude/settings.json` and Claude Code's tools work only in Claude Code, so don't rely on them alone. When a skill uses one, also say what another agent does instead.
+Write rules and skills so any agent can follow them, and address the agent as "you." Give the generic steps, such as changing to a directory. When a Claude tool helps, mention it after the generic step, with a lead-in such as "For example, Claude can" or "With Claude, you can also." `.claude/settings.json` works only in Claude Code, so don't rely on it alone.
 
 Don't document something that's documented elsewhere. Link to it instead. For example, don't document how to use [Drizzle's transactions](https://orm.drizzle.team/docs/transactions). However, you can add further guidance. For example, you can say to name the transaction variable `tx` and why.
 
@@ -62,7 +62,7 @@ Don't document something that's documented elsewhere. Link to it instead. For ex
 - If a task's scope changes, update the issue and PR to match.
 - If a PR handles something another open issue lists, remove it from that issue, and say what you removed.
 - Status is To Do when the issue or Dependabot PR is added, In Progress when its worktree is created and while its PR is a draft, In Review when its PR is ready for review, and Done when the PR merges. The board sets To Do and Done; humans and agents set In Progress and In Review.
-- When an issue moves to In Review, ask whether to run `/code-review`. Run a review only when the user asks for one.
+- When an issue moves to In Review, ask whether to review the PR. Run a review only when the user asks for one. For example, Claude can use `/code-review`.
 
 Skills:
 
@@ -70,14 +70,14 @@ Skills:
 
 ### Work in a Worktree
 
-- A human starts each task's session in the main checkout, with **Worktree** off. Use the `add-and-remove-worktrees` skill to set up and remove the task's worktree.
-- Enter the worktree before you edit anything. Until then, a session edits the main checkout.
+- A human starts each task's session in the main checkout, not in a worktree. Use the `add-and-remove-worktrees` skill to set up and remove the task's worktree.
+- Change to the worktree before you edit anything. Until then, your edits land in the main checkout.
 - Name a task's worktree `.claude/worktrees/<issue-number>/`, on branch `<issue-number>-<short-name>`. A Dependabot PR's worktree uses the PR number, on Dependabot's branch. Issues and PRs share one number sequence, so a PR's number never matches an issue's.
-- Title a task's session `#<number> <PR title>`, with the issue's number, or the PR's for a Dependabot PR. Until there's a PR, use the issue's title.
-- Don't move a worktree the app created for a session. The session's write hook stays registered to the old path, which strands the session.
+- If you can name sessions, title a task's session `#<number> <PR title>`, with the issue's number, or the PR's for a Dependabot PR. Until there's a PR, use the issue's title.
+- Don't move a worktree that was created for your session. Your session stays tied to the old path.
 - Give each worktree its own `.env.local`, copied from the main checkout, and its own `npm install`.
 - All worktrees share one Neon database and one ngrok tunnel, so only one worktree at a time runs migrations or tests webhooks.
-- A change to `.claude/settings.json` on a branch doesn't apply to a session that started in the main checkout, and a change to `.claude/skills/` may not, so test them after they merge.
+- Claude reads `.claude/settings.json` from the main checkout, and may read `.claude/skills/` from there too, so test changes to them after they merge.
 
 Skills:
 
@@ -149,9 +149,9 @@ Skills:
 
 ### Run the Development Server
 
-- Humans run the development server on ports 3200–3209. Agents use 3210–3219, one per worktree, with `npx next dev -p <port>`.
+- Humans run the development server on ports 3200–3209. You use 3210–3219, one per worktree, with `npx next dev -p <port>`.
 - Before you start, see what's running. `lsof -nP -iTCP:3210-3219 -sTCP:LISTEN` lists what's listening on the agents' ports.
-- `dev:tunnel` forwards to port 3200, so an agent on another port runs `ngrok http <port>`.
+- `dev:tunnel` forwards to port 3200, so on another port, run `ngrok http <port>`.
 - When you're done, stop your server. You can also stop a server in the agents' range that's no longer in use, but don't stop, restart, or reuse one outside it, which a human may be using.
 
 ### Open and Merge Pull Requests

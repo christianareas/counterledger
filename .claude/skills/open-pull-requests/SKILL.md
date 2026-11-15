@@ -62,7 +62,7 @@ If the user asks for a PR that's ready for review from the start, leave out `--d
 
 ### Check the Session's Title
 
-The session's title should match the PR's. If it doesn't, rename the session, as the `add-and-remove-worktrees` skill describes.
+If you can name sessions, the session's title should match the PR's. If it doesn't, rename the session, as the `add-and-remove-worktrees` skill describes.
 
 ### Say the Draft Is Open
 
@@ -91,4 +91,4 @@ Use the `create-and-manage-issues` skill. A Dependabot PR has its own item on th
 
 ### Say the PR Is Ready for Review
 
-Tell the user the PR is ready for review, and link to it. Then ask whether to run `/code-review`, and run it only if the user says to.
+Tell the user the PR is ready for review, and link to it. Then ask whether to review the PR yourself, and review it only if the user says to. For example, Claude can use `/code-review`.

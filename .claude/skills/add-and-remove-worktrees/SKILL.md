@@ -13,7 +13,7 @@ Merge only when the user says to.
 
 ### Check Where the Session Started
 
-A human starts the session in the main checkout, with **Worktree** off. In the terminal, that's `claude` without `--worktree`. Don't start it from another session, which has landed in the parent's worktree as well as in the main checkout.
+A human starts the session in the main checkout, not in a worktree. For example, in the Claude app, **Worktree** is off, and in the terminal, it's `claude` without `--worktree`. Don't start it from another session, which has landed in the parent's worktree as well as in the main checkout.
 
 Check that this command prints the main checkout, not a path under `.claude/worktrees/`:
 
@@ -21,13 +21,13 @@ Check that this command prints the main checkout, not a path under `.claude/work
 git rev-parse --show-toplevel
 ```
 
-In the app, also call `get_session` with `self`. It must show no `worktreePath`.
+With Claude, you can also call `get_session` with `self`, which must show no `worktreePath`.
 
-If the session is in a worktree the app created, which has a random name, stop and ask for a new session.
+If your session started in a worktree of its own, which has a random name, stop and ask for a new session.
 
 ### Create the Worktree
 
-Run these from the main checkout. Once a session is in a worktree, Claude Code refuses git commands aimed at the main checkout.
+Run these from the main checkout, before you change to the worktree. Claude, for example, refuses git commands aimed at the main checkout once it's in a worktree.
 
 If `git worktree list` already shows the task's worktree, because an earlier session started the task, skip to [Copy `.env.local`](#copy-envlocal).
 
@@ -53,17 +53,17 @@ git worktree add --track -b <branch> .claude/worktrees/<pr-number> origin/<branc
 
 ### Copy `.env.local`
 
-If the worktree already has a `.env.local`, skip this step. Otherwise, ask the user for permission to copy it, and show them the command. Once they agree, copy the file without reading it. `.worktreeinclude` doesn't help, because it applies only to worktrees Claude Code creates. If the deny rule in `.claude/settings.json` refuses the copy, ask a human to run it.
+If the worktree already has a `.env.local`, skip this step. Otherwise, ask the user for permission to copy it, and show them the command. Once they agree, copy the file without reading it. If you can't run the copy, ask the user to run it. With Claude, `.worktreeinclude` doesn't help, because it applies only to worktrees Claude creates.
 
 ```bash
 cp .env.local .claude/worktrees/<number>/.env.local
 ```
 
-### Enter the Worktree
+### Change to the Worktree
 
-Call `EnterWorktree` with `path` set to the worktree's absolute path. In another agent, change to that directory instead. Enter before you edit anything, because a session edits the main checkout until it does.
+Change to the worktree's directory before you edit anything, because until you do, your edits land in the main checkout. With Claude, use `EnterWorktree` with `path` set to the worktree's absolute path instead, which also keeps your git commands from reaching the main checkout.
 
-Stay in the worktree until you finish the task. To confirm where you are, use `git rev-parse --show-toplevel`. `get_session` keeps showing the main checkout as `cwd`.
+Stay in the worktree until you finish the task. To confirm where you are, use `git rev-parse --show-toplevel`. With Claude, `get_session` keeps showing the main checkout as `cwd`.
 
 ### Install the Dependencies
 
@@ -75,9 +75,9 @@ npm warns that it skipped install scripts for esbuild and fsevents. That's expec
 
 ### Name the Session
 
-Title the session `#<number> <PR title>`. Until there's a PR, use the issue's title. If the PR's title changes, rename the session to match.
+If you can name sessions, title the session `#<number> <PR title>`. Until there's a PR, use the issue's title. If the PR's title changes, rename the session to match.
 
-In the app, call `set_session_title` with `session_id` set to `self`. In the terminal, run `/rename`.
+For example, Claude can call `set_session_title` with `session_id` set to `self`.
 
 ### Move the Issue to In Progress
 
@@ -95,9 +95,9 @@ gh pr checks <number>
 
 Any non-zero exit code means don't merge yet, so tell the user. `--admin` bypasses required checks, so this is the only check before merging.
 
-### Leave the Worktree
+### Change to the Main Checkout
 
-Stop any server you started in the worktree. Then call `ExitWorktree` with `action` set to `keep`, which returns the session to the main checkout. `gh` needs to run from there, because inside the worktree it skips the local cleanup.
+Stop any server you started in the worktree. Then change to the main checkout, because inside the worktree, `gh` skips the local cleanup. With Claude, if you used `EnterWorktree`, call `ExitWorktree` with `action` set to `keep` instead.
 
 ### Check for Unmerged Work
 
@@ -117,7 +117,7 @@ If the two commits differ, stop and ask. The merge only includes what's pushed, 
 gh pr merge <number> --admin --merge --delete-branch
 ```
 
-Don't pass `--repo` or `-R`, which turns off the local cleanup. `.claude/settings.json` asks for approval before this runs.
+Don't pass `--repo` or `-R`, which turns off the local cleanup. With Claude, `.claude/settings.json` asks the user to approve this command.
 
 ### Clean Up
 
@@ -136,4 +136,4 @@ git worktree remove .claude/worktrees/<number>
 git branch -d <branch>
 ```
 
-The app doesn't remove worktrees made with `git worktree add`, so remove them here. The board moves the issue to Done on its own.
+Don't count on anything else to remove them. The Claude app, for example, doesn't remove worktrees made with `git worktree add`. The board moves the issue to Done on its own.
