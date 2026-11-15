@@ -151,7 +151,7 @@ Skills:
 
 - Humans run the development server on ports 3200–3209. You use 3210–3219, one per worktree, with `npx next dev -p <port>`.
 - Before you start, see what's running. `lsof -nP -iTCP:3210-3219 -sTCP:LISTEN` lists what's listening on the agents' ports.
-- `dev:tunnel` forwards to port 3200, so on another port, run `ngrok http <port>`.
+- `dev:tunnel` forwards the shared ngrok tunnel to port 3200, where Plaid's webhooks arrive. Before you test webhooks, ask the user.
 - When you're done, stop your server. You can also stop a server in the agents' range that's no longer in use, but don't stop, restart, or reuse one outside it, which a human may be using.
 
 ### Open and Merge Pull Requests
