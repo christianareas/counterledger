@@ -7,8 +7,6 @@
 
 [global] # https://rumdl.dev/global-settings/
 extend-enable = ["table-format"] # https://rumdl.dev/md060/
-exclude = [".git"]
-respect-gitignore = true
 
 # --------------------------------------------------------------------------------
 # Unordered list indentation.
