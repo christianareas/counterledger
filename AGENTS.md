@@ -88,6 +88,7 @@ Skills:
 - Don't commit or push unless asked. Each set of changes needs its own go-ahead. Humans ask for a change and then review the diff, and there's no diff to review once it's committed.
 - Make one logical change at a time, and propose its commit message with it. Give each change its own commit, so its diff is small enough to review quickly and its message describes the whole commit.
 - Stage each change once you've made it, so `git diff --staged` shows exactly what its commit will contain. Before you start a change for a different commit, ask whether to commit the staged one.
+- Run `git commit`, `git push`, and `git merge` from the worktree, without `-C` or `-c`. With Claude, `.claude/settings.json` asks before these commands only in that form.
 - Don't commit debugging code, such as `console.log` calls, or secrets, such as `.env*` files, API keys, or tokens.
 - Write commit messages in the past tense, short and ending with a period, such as "Limited PLAID_ENV to sandbox and production."
 - Don't read `.env*` files. To copy one, ask the user first, and then use `cp`.
