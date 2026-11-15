@@ -52,6 +52,8 @@ For this project, rules belong in this file (`AGENTS.md`), and skills belong in 
 
 Rules and skills are listed in the following sections, organized by the type of task. If you add a new rule or skill, follow this project's patterns.
 
+Write rules and skills so any agent can follow them. `.claude/settings.json` and Claude Code's tools work only in Claude Code, so don't rely on them alone. When a skill uses one, also say what another agent does instead.
+
 Don't document something that's documented elsewhere. Link to it instead. For example, don't document how to use [Drizzle's transactions](https://orm.drizzle.team/docs/transactions). However, you can add further guidance. For example, you can say to name the transaction variable `tx` and why.
 
 ### Manage Issues
