@@ -25,6 +25,8 @@ With Claude, you can also call `get_session` with `self`, which must show no `wo
 
 If your session started in a worktree of its own, which has a random name, stop and ask for a new session.
 
+If it prints the task's own worktree, `.claude/worktrees/<number>`, you're resuming the task there. Skip to [Copy `.env.local`](#copy-envlocal), and copy the file from `../../../.env.local`.
+
 ### Create the Worktree
 
 Run these from the main checkout, before you change to the worktree. Claude, for example, refuses git commands aimed at the main checkout once it's in a worktree.
