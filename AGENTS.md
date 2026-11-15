@@ -33,7 +33,7 @@ The following sections list this project's main directories and files.
 
 ### Non-User-Facing Files
 
-- `.claude/settings.json`: Asks before commits, pushes, merges, and PR changes, and denies reading `.env*` files and moving worktrees.
+- `.claude/settings.json`: Makes Claude Code ask before it copies `.env*` files, commits, pushes, merges, opens a PR, or marks one ready. It also blocks Claude Code from reading `.env*` files or moving worktrees.
 - `.claude/skills/`: Skills for recurring tasks, one folder per skill. See also [Rules and Skills](#rules-and-skills).
 - `.claude/worktrees/`: One worktree per task. Git ignores it.
 - `.github/`: The PR and issue templates.
@@ -89,7 +89,7 @@ Skills:
 - Stage each change once you've made it, so `git diff --staged` shows exactly what its commit will contain. Before you start a change for a different commit, ask whether to commit the staged one.
 - Don't commit debugging code, such as `console.log` calls, or secrets, such as `.env*` files, API keys, or tokens.
 - Write commit messages in the past tense, short and ending with a period, such as "Limited PLAID_ENV to sandbox and production."
-- Don't read `.env*` files. To copy one, use `cp`.
+- Don't read `.env*` files. To copy one, ask the user first, and then use `cp`.
 - This repository is public. Don't name private repositories or organizations in it, or in issues, PRs, or commits.
 
 ### Write Code

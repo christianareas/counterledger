@@ -29,7 +29,7 @@ If the session is in a worktree the app created, which has a random name, stop a
 
 Run these from the main checkout. Once a session is in a worktree, Claude Code refuses git commands aimed at the main checkout.
 
-If `git worktree list` already shows the task's worktree, because an earlier session started the task, skip to [Enter the Worktree](#enter-the-worktree).
+If `git worktree list` already shows the task's worktree, because an earlier session started the task, skip to [Copy `.env.local`](#copy-envlocal).
 
 If `git branch --list <branch>` shows the task's branch, but `git worktree list` doesn't show its worktree, because something removed it, create the worktree on the existing branch. Leave out `-b`, which fails when the branch already exists:
 
@@ -53,7 +53,7 @@ git worktree add --track -b <branch> .claude/worktrees/<pr-number> origin/<branc
 
 ### Copy `.env.local`
 
-Copy the file without reading it. `.worktreeinclude` doesn't help, because it applies only to worktrees Claude Code creates. If the deny rule in `.claude/settings.json` refuses the copy, ask a human to run it.
+If the worktree already has a `.env.local`, skip this step. Otherwise, ask the user for permission to copy it, and show them the command. Once they agree, copy the file without reading it. `.worktreeinclude` doesn't help, because it applies only to worktrees Claude Code creates. If the deny rule in `.claude/settings.json` refuses the copy, ask a human to run it.
 
 ```bash
 cp .env.local .claude/worktrees/<number>/.env.local
