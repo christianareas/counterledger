@@ -1,4 +1,7 @@
-# rumdl settings
+# --------------------------------------------------------------------------------
+# Global settings.
+# --------------------------------------------------------------------------------
+
 # Anything that's not set uses rumdl's defaults (https://rumdl.dev/global-settings/ or each rule's page).
 # To see the defaults, run `rumdl config --defaults`.
 
@@ -7,15 +10,33 @@ extend-enable = ["table-format"] # https://rumdl.dev/md060/
 exclude = [".git"]
 respect-gitignore = true
 
+# --------------------------------------------------------------------------------
+# Unordered list indentation.
+# --------------------------------------------------------------------------------
+
 [ul-indent] # https://rumdl.dev/md007/
 indent = 2
 
+# --------------------------------------------------------------------------------
+# Line length.
+# --------------------------------------------------------------------------------
+
 [line-length] # https://rumdl.dev/md013/
 line-length = 0
+
+# --------------------------------------------------------------------------------
+# Table format.
+# --------------------------------------------------------------------------------
 
 [table-format] # https://rumdl.dev/md060/
 style = "aligned"
 loose-last-column = true
 
+# --------------------------------------------------------------------------------
+# Per-file ignores.
+# --------------------------------------------------------------------------------
+
 [per-file-ignores] # https://rumdl.dev/global-settings/#per-file-ignores
 ".github/pull_request_template.md" = ["first-line-heading"] # https://rumdl.dev/md041/
+
+# --------------------------------------------------------------------------------
