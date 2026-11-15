@@ -13,7 +13,7 @@ Merge only when the user says to.
 
 ### Check Where the Session Started
 
-A human starts the session in the main checkout, not in a worktree. For example, in the Claude app, **Worktree** is off, and in the terminal, it's `claude` without `--worktree`. Don't start it from another session, which has landed in the parent's worktree as well as in the main checkout.
+A human starts the session in the main checkout, not in a worktree. For example, in the Claude app, **Worktree** is off, and in the terminal, it's `claude` without `--worktree`. Don't start it from another session, which can land it in the parent's worktree.
 
 Check that this command prints the main checkout, not a path under `.claude/worktrees/`:
 
@@ -87,7 +87,7 @@ Use the `create-and-manage-issues` skill. A Dependabot PR has its own item on th
 
 ## Finish a Task
 
-Do this only when the user says to merge. What `gh` does here comes from reading its source, and hasn't been run end to end, so don't skip the checks.
+Do this only when the user says to merge, and don't skip the checks below.
 
 ### Check the PR
 
